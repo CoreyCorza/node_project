@@ -1,0 +1,18 @@
+.node-widget-debug {
+  min-width: 120px;
+  max-width: 200px;
+  max-height: 120px;
+  overflow: auto;
+  background: #202020;
+  border-radius: 4px;
+}
+
+.node-widget-debug-output {
+  margin: 0;
+  padding: 4px;
+  font-size: 0.65rem;
+  font-family: ui-monospace, monospace;
+  color: #aaa;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

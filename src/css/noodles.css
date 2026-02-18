@@ -1,0 +1,26 @@
+.noodle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+
+}
+
+.noodle.preview {
+  z-index: 2;
+}
+
+.noodle path {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+
+}
+
+.noodle.preview path {
+  stroke-dasharray: 4 4;
+  animation: noodle-preview-dash 0.3s linear infinite;
+}
+
+@keyframes noodle-preview-dash {
+  to { stroke-dashoffset: -8; }
+}

@@ -1,0 +1,65 @@
+.widget-boolean {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.widget-boolean-label {
+  font-size: 0.7rem;
+  color: #888;
+  flex: 1;
+  min-width: 0;
+}
+
+.widget-boolean-toggle {
+  flex-shrink: 0;
+  padding: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.widget-boolean-track {
+  display: block;
+  width: 28px;
+  height: 14px;
+  border-radius: 20px;
+  background: #333;
+  border: 1px solid #444;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.widget-boolean-toggle:hover .widget-boolean-track {
+  background: #404040;
+}
+
+.widget-boolean-toggle.on .widget-boolean-track {
+  background: #9ae04a81;
+  border-color: #9ae04a;
+}
+
+.widget-boolean-knob {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #666;
+  transform: translateY(-50%);
+  transition: transform 0.15s, background 0.15s;
+}
+
+.widget-boolean-toggle.on .widget-boolean-knob {
+  transform: translate(14px, -50%);
+  background: #9ae04a;
+}
+
+.widget-boolean-toggle:hover .widget-boolean-knob {
+  background: #888;
+}
+
+.widget-boolean-toggle.on:hover .widget-boolean-knob {
+  background: #a8e85c;
+}
