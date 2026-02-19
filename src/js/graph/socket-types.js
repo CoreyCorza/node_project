@@ -1,7 +1,7 @@
 export const SOCKET_TYPES = ['default', 'float', 'integer', 'string', 'bool', 'any']
 
 export const SOCKET_COLORS = {
-  default: '#9ae04a',
+  default: '###74e04ab2',
   float: '#929292',
   integer: '#67d69f',
   string: '#60acc5',
