@@ -109,8 +109,27 @@ function buildInputNodeWidget(node) {
         outSocket.el.classList.add(newClass)
         outSocket.el.dataset.socketDataType = type
       }
-      if (outSocket.connections) {
-        for (const noodle of outSocket.connections) {
+      for (const noodle of [...(outSocket.connections || [])]) {
+        const destNode = noodle.toSocket?.node
+        const oldInput = noodle.toSocket
+        if (!destNode || !oldInput) continue
+
+        const newInput = destNode.inputs.find(s => s.dataType === type)
+        if (newInput && newInput !== oldInput) {
+          // disconnect from old input
+          oldInput.removeConnection(noodle)
+          // clear any existing connection on the new input
+          for (const old of [...newInput.connections]) old.remove()
+          // reconnect to matching input
+          noodle.toSocket = newInput
+          newInput.addConnection(noodle)
+          noodle.updatePath()
+          noodle.updateColor()
+        } else if (!newInput) {
+          // no matching socket — disconnect entirely
+          noodle.remove()
+        } else {
+          // same socket, just update color
           noodle.updateColor()
         }
       }
