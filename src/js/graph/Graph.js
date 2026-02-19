@@ -223,6 +223,7 @@ export class Graph {
           <div class="context-item" data-action="add-string">String Node</div>
           <div class="context-item" data-action="add-int">Integer Node</div>
           <div class="context-item" data-action="add-bool">Bool Node</div>
+          <div class="context-item" data-action="add-input">Input</div>
         </div>
       </div>
     `
@@ -241,7 +242,7 @@ export class Graph {
       e.stopPropagation()
       const item = e.target.closest('.context-item[data-action]')
       if (item && item.dataset.action?.startsWith('add-') && this.contextGraphPos) {
-        const typeMap = { 'add-load-file': 'load-file', 'add-debug': 'debug', 'add-test': 'test', 'add-float': 'float', 'add-string': 'string', 'add-int': 'integer', 'add-bool': 'bool' }
+        const typeMap = { 'add-load-file': 'load-file', 'add-debug': 'debug', 'add-test': 'test', 'add-float': 'float', 'add-string': 'string', 'add-int': 'integer', 'add-bool': 'bool', 'add-input': 'input' }
         const typeId = typeMap[item.dataset.action]
         if (typeId) {
           const def = getNodeType(typeId)

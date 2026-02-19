@@ -1,3 +1,5 @@
 export { createBooleanWidget } from './BooleanWidget.js'
 export { createLoadFileWidget } from './LoadFileWidget.js'
 export { createDebugWidget } from './DebugWidget.js'
+export { createFloatWidget } from './FloatWidget.js'
+export { createInputWidget } from './InputWidget.js'

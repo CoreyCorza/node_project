@@ -24,14 +24,14 @@
   width: 28px;
   height: 14px;
   border-radius: 20px;
-  background: #333;
-  border: 1px solid #444;
+  background: #e04a4a81;
+  border: 1px solid #e04a4a;
   position: relative;
   transition: background 0.15s, border-color 0.15s;
 }
 
 .widget-boolean-toggle:hover .widget-boolean-track {
-  background: #404040;
+  background: #e05a5a81;
 }
 
 .widget-boolean-toggle.on .widget-boolean-track {
@@ -46,7 +46,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #666;
+  background: #e04a4a;
   transform: translateY(-50%);
   transition: transform 0.15s, background 0.15s;
 }
@@ -57,7 +57,7 @@
 }
 
 .widget-boolean-toggle:hover .widget-boolean-knob {
-  background: #888;
+  background: #e85c5c;
 }
 
 .widget-boolean-toggle.on:hover .widget-boolean-knob {
