@@ -9,6 +9,7 @@ export class Noodle {
     this.toSocket = toSocket
     this.el = null
     this.gradientId = `noodle-grad-${++noodleIdCounter}`
+    this.glowFilterId = `noodle-glow-${noodleIdCounter}`
   }
 
   createElement() {
@@ -25,13 +26,29 @@ export class Noodle {
     grad.setAttribute('gradientUnits', 'userSpaceOnUse')
     grad.innerHTML = '<stop offset="0%" stop-color="#9ae04a"/><stop offset="100%" stop-color="#a149db"/>'
     defs.appendChild(grad)
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter')
+    filter.setAttribute('id', this.glowFilterId)
+    filter.setAttribute('x', '-50%')
+    filter.setAttribute('y', '-50%')
+    filter.setAttribute('width', '200%')
+    filter.setAttribute('height', '200%')
+    filter.innerHTML = '<feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>'
+    defs.appendChild(filter)
     svg.appendChild(defs)
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('fill', 'none')
     path.setAttribute('stroke-width', '2')
     path.setAttribute('stroke-linecap', 'round')
     svg.appendChild(path)
+    const pulsePath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    pulsePath.setAttribute('fill', 'none')
+    pulsePath.setAttribute('stroke-width', '4')
+    pulsePath.setAttribute('stroke-linecap', 'round')
+    pulsePath.setAttribute('class', 'pulse-path')
+    pulsePath.setAttribute('filter', `url(#${this.glowFilterId})`)
+    svg.appendChild(pulsePath)
     this.pathEl = path
+    this.pulsePathEl = pulsePath
     this.gradientEl = grad
     this.el = svg
     return svg
@@ -124,6 +141,7 @@ export class Noodle {
       d = `M ${from.x} ${from.y} C ${cp1x} ${from.y}, ${cp2x} ${to.y}, ${to.x} ${to.y}`
     }
     this.pathEl.setAttribute('d', d)
+    if (this.pulsePathEl) this.pulsePathEl.setAttribute('d', d)
 
     const minX = Math.min(from.x, to.x) - 20
     const minY = Math.min(from.y, to.y) - 20
@@ -149,6 +167,12 @@ export class Noodle {
     this.el.setAttribute('class', v ? `${cls} preview`.trim() : cls || 'noodle')
   }
 
+  setPulse(v) {
+    if (!this.el) return
+    if (v) this.el.classList.add('pulse')
+    else this.el.classList.remove('pulse')
+  }
+
   updateColor() {
     if (!this.el) return
     const useGradient = needsGradient(this.fromSocket, this.toSocket)
@@ -159,9 +183,11 @@ export class Noodle {
       if (stops[0]) stops[0].setAttribute('stop-color', c1)
       if (stops[1]) stops[1].setAttribute('stop-color', c2)
       this.pathEl.setAttribute('stroke', `url(#${this.gradientId})`)
+      if (this.pulsePathEl) this.pulsePathEl.setAttribute('stroke', `url(#${this.gradientId})`)
       this.el.setAttribute('class', cls)
     } else {
       this.pathEl.removeAttribute('stroke')
+      if (this.pulsePathEl) this.pulsePathEl.removeAttribute('stroke')
       const typeClass = getNoodleTypeClass(this.toSocket?.dataType ?? this.fromSocket?.dataType ?? 'default')
       this.el.setAttribute('class', `${cls} ${typeClass}`.trim())
     }

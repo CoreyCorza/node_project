@@ -136,6 +136,10 @@ export class Graph {
     } catch (_) {}
   }
 
+  setPulseNoodles(pulse) {
+    this.noodles.forEach(n => n.setPulse(pulse))
+  }
+
   clear() {
     this.noodles.forEach(n => n.remove())
     this.noodles = []

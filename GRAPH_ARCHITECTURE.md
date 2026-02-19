@@ -124,7 +124,6 @@ Visual and logical connection between two sockets.
 | `graph` | Parent Graph |
 
 **Visual behavior:**
-- Bezier curves use directional control points (out from socket, then toward target)
 - When typed socket connects to `any` socket: gradient stroke between the two colors
 - `graph.noodleStyle` controls `'smooth'` (bezier) vs `'linear'` (straight line)
 

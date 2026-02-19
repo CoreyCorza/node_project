@@ -24,3 +24,19 @@
 @keyframes noodle-preview-dash {
   to { stroke-dashoffset: -8; }
 }
+
+.noodle path.pulse-path {
+  visibility: hidden;
+  stroke-dasharray: 60 262;
+  animation: noodle-pulse 1s linear infinite;
+  stroke-width: 3;
+  opacity: 0.9;
+}
+
+.noodle.pulse path.pulse-path {
+  visibility: visible;
+}
+
+@keyframes noodle-pulse {
+  to { stroke-dashoffset: -322; }
+}

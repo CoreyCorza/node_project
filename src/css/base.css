@@ -19,6 +19,15 @@ html {
   background-color: var(--graph-bg);
 }
 
+button,
+input,
+select,
+textarea,
+[role="button"] {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   transition: opacity 0.2s ease-in-out;
   margin: 0;

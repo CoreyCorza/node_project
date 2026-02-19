@@ -179,10 +179,12 @@ playbar.addEventListener('click', async (e) => {
   progressEl.offsetHeight
   progressEl.classList.add('animating')
 
+  graph.setPulseNoodles(true)
   const r = await graph.execute()
   if (!r.ok) console.error(r.error)
 
   await new Promise(r => setTimeout(r, 2000))
+  graph.setPulseNoodles(false)
   progressEl.classList.remove('animating')
   progressEl.classList.add('completed')
   track.style.display = 'none'
