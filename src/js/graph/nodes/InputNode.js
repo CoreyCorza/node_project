@@ -8,7 +8,14 @@ export const InputNode = {
   compute: (inputs, node) => {
     const val = node?.inputValue ?? ''
     const type = node?.inputDataType ?? 'string'
-    if (type === 'float') return { out: parseFloat(val) || 0 }
+    if (type === 'float') {
+      const num = parseFloat(val) || 0
+      if (node?.floatRound) {
+        const decimals = node.floatDecimals ?? 2
+        return { out: parseFloat(num.toFixed(decimals)) }
+      }
+      return { out: num }
+    }
     if (type === 'integer') return { out: parseInt(val, 10) || 0 }
     if (type === 'bool') return { out: node?.booleanValue ?? false }
     return { out: val }

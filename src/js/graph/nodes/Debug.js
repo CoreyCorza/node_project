@@ -25,7 +25,13 @@ export const Debug = {
         el.textContent = `[Error: ${err}]`
       }
     } else {
-      el.textContent = String(val)
+      const srcNode = conn?.fromSocket?.node
+      if (typeof val === 'number' && srcNode?.inputDataType === 'float' && srcNode?.floatRound) {
+        const decimals = srcNode.floatDecimals ?? 2
+        el.textContent = val.toFixed(decimals)
+      } else {
+        el.textContent = String(val)
+      }
     }
   }
 }

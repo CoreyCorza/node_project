@@ -5,7 +5,7 @@ import { StringNode } from './StringNode.js'
 import { IntegerNode } from './IntegerNode.js'
 import { BoolNode } from './BoolNode.js'
 import { TestNode } from './TestNode.js'
-import { InputNode } from './GenericNode.js'
+import { InputNode } from './InputNode.js'
 
 const nodeDefs = [LoadFile, Debug, FloatNode, StringNode, IntegerNode, BoolNode, TestNode, InputNode]
 
