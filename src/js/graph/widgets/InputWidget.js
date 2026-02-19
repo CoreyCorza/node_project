@@ -44,7 +44,14 @@ function createBoolToggle(node) {
   })
   btn.addEventListener('mousedown', (e) => e.stopPropagation())
   btn.addEventListener('pointerdown', (e) => e.stopPropagation())
-  row.appendChild(btn)
+  const boolWrap = document.createElement('div')
+  boolWrap.className = 'widget-input-decimals-wrap'
+  const boolTooltip = document.createElement('div')
+  boolTooltip.className = 'widget-tooltip'
+  boolTooltip.textContent = 'Toggle true / false'
+  boolWrap.appendChild(btn)
+  boolWrap.appendChild(boolTooltip)
+  row.appendChild(boolWrap)
   update()
   return row
 }
@@ -57,9 +64,16 @@ function createDecimalsInput(node, onChange) {
   label.className = 'widget-input-bool-label'
   label.textContent = 'decimals'
   row.appendChild(label)
+  const displayWrap = document.createElement('div')
+  displayWrap.className = 'widget-input-decimals-wrap'
   const display = document.createElement('div')
   display.className = 'widget-input-decimals-display'
   display.textContent = String(node.floatDecimals)
+  const tooltip = document.createElement('div')
+  tooltip.className = 'widget-tooltip'
+  tooltip.textContent = 'Ctrl + Scroll'
+  displayWrap.appendChild(display)
+  displayWrap.appendChild(tooltip)
   display.addEventListener('wheel', (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -73,7 +87,7 @@ function createDecimalsInput(node, onChange) {
   }, { passive: false })
   display.addEventListener('mousedown', (e) => e.stopPropagation())
   display.addEventListener('pointerdown', (e) => e.stopPropagation())
-  row.appendChild(display)
+  row.appendChild(displayWrap)
   return row
 }
 
@@ -108,7 +122,14 @@ function createRoundToggle(node, onChange) {
   })
   btn.addEventListener('mousedown', (e) => e.stopPropagation())
   btn.addEventListener('pointerdown', (e) => e.stopPropagation())
-  row.appendChild(btn)
+  const toggleWrap = document.createElement('div')
+  toggleWrap.className = 'widget-input-decimals-wrap'
+  const toggleTooltip = document.createElement('div')
+  toggleTooltip.className = 'widget-tooltip'
+  toggleTooltip.textContent = 'Enable custom decimals'
+  toggleWrap.appendChild(btn)
+  toggleWrap.appendChild(toggleTooltip)
+  row.appendChild(toggleWrap)
   update()
   return row
 }

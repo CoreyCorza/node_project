@@ -119,6 +119,14 @@ toolbar.innerHTML = `
         <div class="settings-menu-label">Noodles</div>
         <button class="settings-menu-item" type="button" data-noodle-style="smooth">Smooth curves</button>
         <button class="settings-menu-item" type="button" data-noodle-style="linear">Linear straight</button>
+        <div class="settings-menu-divider"></div>
+        <div class="settings-menu-label">Interface</div>
+        <div class="settings-menu-toggle-row">
+          <span class="settings-menu-toggle-label">Tooltips</span>
+          <button class="widget-boolean-toggle settings-tooltips-btn" type="button" role="switch" aria-checked="true">
+            <span class="widget-boolean-track"><span class="widget-boolean-knob"></span></span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -241,6 +249,26 @@ settingsMenuItems.forEach(btn => {
     graph.setNoodleStyle(style)
     settingsMenuItems.forEach(el => el.classList.toggle('active', el.dataset.noodleStyle === style))
   })
+})
+
+// Tooltips toggle
+const tooltipsBtn = toolbar.querySelector('.settings-tooltips-btn')
+try {
+  const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+  if (s.tooltips === false) document.body.classList.add('tooltips-disabled')
+} catch {}
+tooltipsBtn.classList.toggle('on', !document.body.classList.contains('tooltips-disabled'))
+tooltipsBtn.setAttribute('aria-checked', !document.body.classList.contains('tooltips-disabled'))
+tooltipsBtn.addEventListener('click', (e) => {
+  e.stopPropagation()
+  const disabled = document.body.classList.toggle('tooltips-disabled')
+  tooltipsBtn.classList.toggle('on', !disabled)
+  tooltipsBtn.setAttribute('aria-checked', !disabled)
+  try {
+    const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+    s.tooltips = !disabled
+    localStorage.setItem('node-graph-settings', JSON.stringify(s))
+  } catch {}
 })
 
 document.addEventListener('click', (e) => {
