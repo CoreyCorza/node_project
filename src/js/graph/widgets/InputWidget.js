@@ -1,4 +1,4 @@
-import { getSocketTypeClass } from '../socket-types.js'
+import { getSocketTypeClass, canConnect } from '../socket-types.js'
 
 const INPUT_TYPES = [
   { value: 'string', label: 'String' },
@@ -319,10 +319,31 @@ export function createInputWidget(node) {
         outSocket.el.classList.add(newClass)
         outSocket.el.dataset.socketDataType = type
       }
-      // Update connected noodle colors
+      // Reconnect, disconnect, or update color for each connection
       if (outSocket.connections) {
-        for (const noodle of outSocket.connections) {
-          noodle.updateColor()
+        for (const noodle of [...outSocket.connections]) {
+          const target = noodle.toSocket
+          if (target && !canConnect(outSocket, target)) {
+            // Try to find a compatible input on the same target node
+            const targetNode = target.node
+            const newTarget = targetNode?.inputs.find(s =>
+              s !== target &&
+              s.connections.length === 0 &&
+              canConnect(outSocket, s)
+            )
+            if (newTarget) {
+              // Rewire: detach from old socket, attach to new one
+              target.removeConnection(noodle)
+              noodle.toSocket = newTarget
+              newTarget.addConnection(noodle)
+              noodle.updatePath()
+              noodle.updateColor()
+            } else {
+              noodle.remove()
+            }
+          } else {
+            noodle.updateColor()
+          }
         }
       }
     }

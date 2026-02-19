@@ -227,7 +227,7 @@ export class Graph {
           <div class="context-item" data-action="add-string">String Node</div>
           <div class="context-item" data-action="add-int">Integer Node</div>
           <div class="context-item" data-action="add-bool">Bool Node</div>
-          <div class="context-item" data-action="add-input">Input</div>
+          <div class="context-item" data-action="add-input">Input Node</div>
         </div>
       </div>
     `
