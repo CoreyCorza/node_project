@@ -1,0 +1,30 @@
+.widget-tooltip-wrap {
+  position: relative;
+}
+
+.widget-tooltip {
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 2px 6px;
+  font-size: 0.6rem;
+  color: #ccc;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+}
+
+.widget-decimals-display:hover + .widget-tooltip,
+.widget-boolean-toggle:hover + .widget-tooltip {
+  opacity: 1;
+}
+
+body.tooltips-disabled .widget-tooltip {
+  display: none;
+}

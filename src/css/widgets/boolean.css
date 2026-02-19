@@ -1,16 +1,3 @@
-.widget-boolean {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.widget-boolean-label {
-  font-size: 0.7rem;
-  color: #888;
-  flex: 1;
-  min-width: 0;
-}
-
 .widget-boolean-toggle {
   flex-shrink: 0;
   padding: 2px;

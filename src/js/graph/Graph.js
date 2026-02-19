@@ -65,6 +65,13 @@ export class Graph {
       }
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) base.selectedFilePath = n.selectedFilePath
       if (n.nodeTypeId === 'bool') base.booleanValue = n.booleanValue
+      if (n.nodeTypeId === 'input') {
+        if (n.inputValue !== undefined) base.inputValue = n.inputValue
+        if (n.inputDataType !== undefined) base.inputDataType = n.inputDataType
+        if (n.booleanValue !== undefined) base.booleanValue = n.booleanValue
+        if (n.floatRound !== undefined) base.floatRound = n.floatRound
+        if (n.floatDecimals !== undefined) base.floatDecimals = n.floatDecimals
+      }
       return base
     })
     const connections = this.noodles
@@ -89,7 +96,12 @@ export class Graph {
         height: n.height,
         nodeTypeId: n.nodeTypeId,
         inputs: n.inputs,
-        outputs: n.outputs
+        outputs: n.outputs,
+        inputValue: n.inputValue,
+        inputDataType: n.inputDataType,
+        booleanValue: n.booleanValue,
+        floatRound: n.floatRound,
+        floatDecimals: n.floatDecimals
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -344,6 +356,13 @@ export class Graph {
       }
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) base.selectedFilePath = n.selectedFilePath
       if (n.nodeTypeId === 'bool') base.booleanValue = n.booleanValue
+      if (n.nodeTypeId === 'input') {
+        if (n.inputValue !== undefined) base.inputValue = n.inputValue
+        if (n.inputDataType !== undefined) base.inputDataType = n.inputDataType
+        if (n.booleanValue !== undefined) base.booleanValue = n.booleanValue
+        if (n.floatRound !== undefined) base.floatRound = n.floatRound
+        if (n.floatDecimals !== undefined) base.floatDecimals = n.floatDecimals
+      }
       return base
     })
     const connections = this.noodles
@@ -384,7 +403,12 @@ export class Graph {
         height: n.height,
         nodeTypeId: n.nodeTypeId,
         inputs: n.inputs,
-        outputs: n.outputs
+        outputs: n.outputs,
+        inputValue: n.inputValue,
+        inputDataType: n.inputDataType,
+        booleanValue: n.booleanValue,
+        floatRound: n.floatRound,
+        floatDecimals: n.floatDecimals
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -505,6 +529,7 @@ export class Graph {
   applyTransform() {
     if (!this.transformEl) return
     this.transformEl.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`
+    this.containerEl?.dispatchEvent(new CustomEvent('graphtransform'))
   }
 
   getViewCoords(clientX, clientY) {
@@ -526,8 +551,11 @@ export class Graph {
     const inputs = options.inputs ?? typeDef?.inputs ?? [{ id: 'in', label: 'in' }]
     const outputs = options.outputs ?? typeDef?.outputs ?? [{ id: 'out', label: 'out' }]
     let computeFn = options.computeFn ?? typeDef?.compute ?? null
-    const node = new Node(this, id, title, x, y, options.width, options.height, {
+    const height = (options.height != null && options.height > 0) ? options.height : (typeDef?.defaultHeight ?? 0)
+    const node = new Node(this, id, title, x, y, options.width, height, {
       nodeTypeId: options.nodeTypeId ?? null,
+      resizableW: options.resizableW ?? typeDef?.resizableW ?? true,
+      resizableH: options.resizableH ?? typeDef?.resizableH ?? false,
       computeFn: null,
       createWidget: options.createWidget ?? typeDef?.createWidget ?? null,
       afterExecute: options.afterExecute ?? typeDef?.afterExecute ?? null
@@ -537,9 +565,17 @@ export class Graph {
       : computeFn
     inputs.forEach(s => node.addInputSocket(s.id ?? s, s.label ?? s, s.dataType ?? 'default'))
     outputs.forEach(s => node.addOutputSocket(s.id ?? s, s.label ?? s, s.dataType ?? 'default'))
+    if (options.nodeTypeId === 'input') {
+      if (options.inputValue !== undefined) node.inputValue = options.inputValue
+      if (options.inputDataType !== undefined) node.inputDataType = options.inputDataType
+      if (options.booleanValue !== undefined) node.booleanValue = options.booleanValue
+      if (options.floatRound !== undefined) node.floatRound = options.floatRound
+      if (options.floatDecimals !== undefined) node.floatDecimals = options.floatDecimals
+    }
     this.nodes.push(node)
     this.nodesEl.appendChild(node.createElement())
     this.setupNodeEvents(node)
+    if (!node.resizableH && typeDef?.heightFollowsContent !== false) requestAnimationFrame(() => node.resizeToContent())
     return node
   }
 
@@ -595,6 +631,11 @@ export class Graph {
 
     const resizeHandle = node.el.querySelector('.node-resize-handle')
     if (resizeHandle) {
+      if (!node.resizableW && !node.resizableH) {
+        resizeHandle.style.display = 'none'
+      } else {
+        resizeHandle.style.cursor = node.resizableW && node.resizableH ? 'nwse-resize' : node.resizableW ? 'ew-resize' : 'ns-resize'
+      }
       resizeHandle.addEventListener('mousedown', (e) => {
         if (e.button !== 0) return
         e.stopPropagation()
@@ -774,15 +815,13 @@ export class Graph {
       return
     }
     if (this.resizingNode) {
+      const node = this.resizingNode
       const dw = (e.clientX - this.resizeStart.clientX) / this.zoom
       const dh = (e.clientY - this.resizeStart.clientY) / this.zoom
-      this.resizingNode.setSize(
-        this.resizeStart.width + dw,
-        this.resizeStart.height + dh,
-        this.resizeStart.minWidth,
-        this.resizeStart.minHeight
-      )
-      this.resizingNode.inputs.concat(this.resizingNode.outputs).forEach(s => {
+      const newW = node.resizableW ? this.resizeStart.width + dw : node.width
+      const newH = node.resizableH ? this.resizeStart.height + dh : node.getMinSize().height
+      node.setSize(newW, newH, this.resizeStart.minWidth, this.resizeStart.minHeight)
+      node.inputs.concat(node.outputs).forEach(s => {
         s.connections.forEach(n => n.updatePath())
       })
       return

@@ -1,9 +1,16 @@
-export function createFloatWidget(node, options = {}) {
-  const valueKey = options.valueKey ?? 'floatValue'
-  if (node[valueKey] === undefined) node[valueKey] = options.defaultValue ?? 0
+/**
+ * Integer input with scrub. Used by Input widget (integer mode), IntegerNode, etc.
+ * @param {Object} node - Node/state to bind to
+ * @param {Object} options
+ * @param {string} [options.label] - Label text
+ * @param {string} [options.valueKey='inputValue'] - Property to read/write (or 'intValue' for IntegerNode)
+ */
+export function createIntegerWidget(node, options = {}) {
+  const valueKey = options.valueKey ?? 'inputValue'
+  if (node[valueKey] === undefined) node[valueKey] = '0'
 
   const wrap = document.createElement('div')
-  wrap.className = 'widget-float widget-row'
+  wrap.className = 'widget-integer widget-row'
   if (options.label) {
     const labelEl = document.createElement('span')
     labelEl.className = 'widget-label'
@@ -11,27 +18,14 @@ export function createFloatWidget(node, options = {}) {
     wrap.appendChild(labelEl)
   }
 
-  const step = options.step ?? 0.1
-  const getDecimals = () => options.getDecimals?.() ?? 2
-  const getRound = () => options.getRound?.() ?? false
-
-  function format(val) {
-    const num = parseFloat(val)
-    if (isNaN(num)) return (0).toFixed(getDecimals())
-    if (getRound()) return num.toFixed(getDecimals())
-    return num.toFixed(getDecimals())
-  }
-
   const input = document.createElement('input')
   input.type = 'number'
-  input.step = String(step)
-  input.className = 'widget-float-field'
-  input.value = format(node[valueKey])
-  input.autocomplete = 'off'
+  input.step = '1'
+  input.className = 'widget-integer-field'
+  input.value = String(Math.round(parseFloat(node[valueKey]) || 0))
   input.addEventListener('input', (e) => {
     e.stopPropagation()
-    node[valueKey] = parseFloat(input.value) || 0
-    options.onChange?.()
+    node[valueKey] = input.value
   })
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
@@ -40,11 +34,10 @@ export function createFloatWidget(node, options = {}) {
     }
   })
   input.addEventListener('blur', () => {
-    const val = parseFloat(node[valueKey]) || 0
-    node[valueKey] = val
-    const formatted = format(val)
-    input.value = formatted
-    scrubEl.textContent = formatted
+    const val = Math.round(parseFloat(node[valueKey]) || 0)
+    node[valueKey] = String(val)
+    input.value = String(val)
+    scrubEl.textContent = String(val)
     input.style.display = 'none'
     scrubEl.style.display = ''
   })
@@ -52,14 +45,13 @@ export function createFloatWidget(node, options = {}) {
   input.addEventListener('pointerdown', (e) => e.stopPropagation())
 
   const scrubEl = document.createElement('div')
-  scrubEl.className = 'widget-float-scrub'
-  scrubEl.textContent = format(node[valueKey])
+  scrubEl.className = 'widget-integer-scrub'
+  scrubEl.textContent = input.value
 
   let dragging = false
   let startX = 0
   let startValue = 0
   let hasMoved = false
-  let rafId = null
 
   scrubEl.addEventListener('mousedown', (e) => {
     e.stopPropagation()
@@ -67,7 +59,7 @@ export function createFloatWidget(node, options = {}) {
     dragging = true
     hasMoved = false
     startX = e.clientX
-    startValue = parseFloat(node[valueKey]) || 0
+    startValue = Math.round(parseFloat(node[valueKey]) || 0)
     scrubEl.classList.add('scrubbing')
     document.body.style.cursor = 'ew-resize'
 
@@ -75,16 +67,10 @@ export function createFloatWidget(node, options = {}) {
       if (!dragging) return
       const dx = ev.clientX - startX
       if (Math.abs(dx) > 2) hasMoved = true
-      const newVal = startValue + dx * step
-      node[valueKey] = newVal
-      if (rafId) cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(() => {
-        const formatted = format(newVal)
-        input.value = formatted
-        scrubEl.textContent = formatted
-        rafId = null
-      })
-      options.onChange?.()
+      const newVal = startValue + Math.round(dx)
+      node[valueKey] = String(newVal)
+      input.value = String(newVal)
+      scrubEl.textContent = String(newVal)
     }
 
     const onUp = () => {
@@ -106,17 +92,11 @@ export function createFloatWidget(node, options = {}) {
   })
 
   const fieldWrap = document.createElement('div')
-  fieldWrap.className = 'widget-float-field-wrap'
+  fieldWrap.className = 'widget-integer-field-wrap'
   fieldWrap.appendChild(scrubEl)
   fieldWrap.appendChild(input)
   input.style.display = 'none'
   wrap.appendChild(fieldWrap)
-
-  wrap.refresh = () => {
-    const formatted = format(node[valueKey])
-    input.value = formatted
-    scrubEl.textContent = formatted
-  }
 
   return wrap
 }

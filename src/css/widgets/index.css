@@ -1,5 +1,10 @@
+@import './row.css';
 @import './boolean.css';
+@import './string.css';
+@import './float.css';
+@import './integer.css';
+@import './dropdown.css';
+@import './decimals.css';
 @import './load-file.css';
 @import './debug.css';
-@import './float.css';
-@import './input_node.css';
+@import './tooltip.css';

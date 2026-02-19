@@ -4,6 +4,9 @@ import { createDebugWidget } from '../widgets/index.js'
 export const Debug = {
   id: 'debug',
   title: 'Debug',
+  resizableH: true,
+  defaultHeight: 140,
+  heightFollowsContent: false,
   inputs: [{ id: 'in', label: 'value', dataType: 'any' }],
   outputs: [],
   compute: () => ({}),

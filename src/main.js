@@ -6,6 +6,7 @@ import './css/noodles.css'
 import './css/widgets/index.css'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { Graph } from './js/graph/index.js'
+import { createBooleanWidget } from './js/graph/widgets/BooleanWidget.js'
 
 function disableNativeTooltips() {
   const migrate = el => {
@@ -121,12 +122,7 @@ toolbar.innerHTML = `
         <button class="settings-menu-item" type="button" data-noodle-style="linear">Linear straight</button>
         <div class="settings-menu-divider"></div>
         <div class="settings-menu-label">Interface</div>
-        <div class="settings-menu-toggle-row">
-          <span class="settings-menu-toggle-label">Tooltips</span>
-          <button class="widget-boolean-toggle settings-tooltips-btn" type="button" role="switch" aria-checked="true">
-            <span class="widget-boolean-track"><span class="widget-boolean-knob"></span></span>
-          </button>
-        </div>
+        <div class="settings-menu-toggle-row" data-tooltips-container></div>
       </div>
     </div>
   </div>
@@ -251,25 +247,30 @@ settingsMenuItems.forEach(btn => {
   })
 })
 
-// Tooltips toggle
-const tooltipsBtn = toolbar.querySelector('.settings-tooltips-btn')
+// Tooltips toggle - uses shared createBooleanWidget
+const tooltipsContainer = toolbar.querySelector('[data-tooltips-container]')
+const tooltipsState = { tooltips: true }
 try {
   const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
-  if (s.tooltips === false) document.body.classList.add('tooltips-disabled')
+  if (s.tooltips === false) {
+    document.body.classList.add('tooltips-disabled')
+    tooltipsState.tooltips = false
+  }
 } catch {}
-tooltipsBtn.classList.toggle('on', !document.body.classList.contains('tooltips-disabled'))
-tooltipsBtn.setAttribute('aria-checked', !document.body.classList.contains('tooltips-disabled'))
-tooltipsBtn.addEventListener('click', (e) => {
-  e.stopPropagation()
-  const disabled = document.body.classList.toggle('tooltips-disabled')
-  tooltipsBtn.classList.toggle('on', !disabled)
-  tooltipsBtn.setAttribute('aria-checked', !disabled)
-  try {
-    const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
-    s.tooltips = !disabled
-    localStorage.setItem('node-graph-settings', JSON.stringify(s))
-  } catch {}
+const tooltipsWidget = createBooleanWidget(tooltipsState, {
+  label: 'Tooltips',
+  valueKey: 'tooltips',
+  onChange: () => {
+    const disabled = !tooltipsState.tooltips
+    document.body.classList.toggle('tooltips-disabled', disabled)
+    try {
+      const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+      s.tooltips = tooltipsState.tooltips
+      localStorage.setItem('node-graph-settings', JSON.stringify(s))
+    } catch {}
+  }
 })
+tooltipsContainer.appendChild(tooltipsWidget)
 
 document.addEventListener('click', (e) => {
   if (!settingsWrap.contains(e.target)) closeSettingsPopover()

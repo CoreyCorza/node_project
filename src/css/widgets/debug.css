@@ -1,7 +1,30 @@
+.node[data-node-type="debug"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.node[data-node-type="debug"] .node-body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.node[data-node-type="debug"] .node-widget-section {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+
+.node[data-node-type="debug"] .node-widget-section .node-widget {
+  position: absolute;
+  inset: 0;
+}
+
 .node-widget-debug {
-  min-width: 120px;
-  max-width: 200px;
-  max-height: 120px;
+  position: absolute;
+  margin: 6px;
+  inset: 0;
   overflow: auto;
   background: #202020;
   border-radius: 4px;
@@ -14,5 +37,7 @@
   font-family: ui-monospace, monospace;
   color: #aaa;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
 }

@@ -1,8 +1,8 @@
-.widget-float-field-wrap {
+.widget-integer-field-wrap {
   width: 100%;
 }
 
-.widget-float-field {
+.widget-integer-field {
   width: 100%;
   padding: 2px 4px;
   font-size: 0.7rem;
@@ -15,17 +15,17 @@
   -moz-appearance: textfield;
 }
 
-.widget-float-field::-webkit-inner-spin-button,
-.widget-float-field::-webkit-outer-spin-button {
+.widget-integer-field::-webkit-inner-spin-button,
+.widget-integer-field::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.widget-float-field:focus {
+.widget-integer-field:focus {
   border-color: #666;
 }
 
-.widget-float-scrub {
+.widget-integer-scrub {
   width: 100%;
   padding: 2px 4px;
   font-family: monospace;
@@ -45,12 +45,12 @@
   line-height: 1.2em;
 }
 
-.widget-float-scrub:hover {
+.widget-integer-scrub:hover {
   border-color: #666;
   background: #333;
 }
 
-.widget-float-scrub.scrubbing {
+.widget-integer-scrub.scrubbing {
   border-color: #888;
   background: #383838;
 }

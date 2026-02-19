@@ -9,6 +9,8 @@ export class Node {
     this.y = y
     this.width = width
     this.height = height
+    this.resizableW = options.resizableW ?? true
+    this.resizableH = options.resizableH ?? false
     this.nodeTypeId = options.nodeTypeId ?? null
     this.computeFn = options.computeFn ?? null
     this.createWidget = options.createWidget ?? null
@@ -30,6 +32,7 @@ export class Node {
     const el = document.createElement('div')
     el.className = 'node'
     el.dataset.nodeId = this.id
+    if (this.nodeTypeId) el.dataset.nodeType = this.nodeTypeId
     el.style.left = `${this.x}px`
     el.style.top = `${this.y}px`
     el.style.width = `${this.width}px`
@@ -105,12 +108,28 @@ export class Node {
 
   setSize(w, h, minW, minH) {
     const min = minW != null && minH != null ? { width: minW, height: minH } : this.getMinSize()
-    this.width = Math.max(min.width, w)
-    this.height = Math.max(min.height, h)
+    const newW = this.resizableW ? Math.max(min.width, w) : this.width
+    const newH = this.resizableH ? Math.max(min.height, h) : min.height
+    this.width = newW
+    this.height = newH
     if (this.el) {
       this.el.style.width = `${this.width}px`
       this.el.style.height = `${this.height}px`
     }
+  }
+
+  resizeToContent() {
+    if (this.resizableH || !this.el) return
+    const min = this.getMinSize()
+    this.height = min.height
+    this.el.style.height = `${this.height}px`
+    for (const s of this.inputs.concat(this.outputs)) {
+      for (const n of s.connections) n.updatePath()
+    }
+  }
+
+  requestResize() {
+    requestAnimationFrame(() => this.resizeToContent())
   }
 
   addInputSocket(id, label = id, dataType = 'default') {

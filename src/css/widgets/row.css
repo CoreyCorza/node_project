@@ -1,0 +1,13 @@
+/* Shared row layout: label + content. Used by boolean, float, input, settings, etc. */
+.widget-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.widget-label {
+  font-size: 0.7rem;
+  color: #888;
+  flex: 1;
+  min-width: 0;
+}
