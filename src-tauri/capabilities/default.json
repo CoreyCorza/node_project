@@ -13,10 +13,14 @@
     "core:window:allow-close",
     "core:window:allow-destroy",
     "core:window:allow-set-focus",
+    "core:window:allow-set-title",
     "shell:default",
     "window-state:default",
     "dialog:allow-open",
+    "dialog:allow-save",
     "fs:default",
+    "fs:read-files",
+    "fs:write-files",
     {
       "identifier": "fs:scope",
       "allow": [
