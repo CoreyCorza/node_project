@@ -18,6 +18,7 @@
     "window-state:default",
     "dialog:allow-open",
     "dialog:allow-save",
+    "dialog:allow-confirm",
     "fs:default",
     "fs:read-files",
     "fs:write-files",

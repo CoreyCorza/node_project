@@ -7,7 +7,7 @@ import './css/socket.css'
 import './css/noodles.css'
 import './css/widgets/index.css'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { open, save } from '@tauri-apps/plugin-dialog'
+import { open, save, confirm } from '@tauri-apps/plugin-dialog'
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import { Graph } from './js/graph/index.js'
 import { Preview } from './js/Preview.js'
@@ -225,6 +225,12 @@ function setPreviewVisible(visible) {
 const toolbar = document.createElement('div')
 toolbar.className = 'toolbar'
 toolbar.innerHTML = `
+  <button class="toolbar-btn" type="button" data-action="new" data-tooltip="New" data-tooltip-position="below">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+  </button>
+  <button class="toolbar-btn" type="button" data-action="add" data-tooltip="Add" data-tooltip-position="below">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
   <button class="toolbar-btn" type="button" data-action="open" data-tooltip="Open" data-tooltip-position="below">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
   </button>
@@ -346,13 +352,17 @@ graph.centerViewOnNodes()
 // --- Project save/load ---
 const crzFilter = { name: 'CRZ Project', extensions: ['crz'] }
 let currentProjectPath = null
+let projectDirty = false
+
+const origSave = graph.save.bind(graph)
+graph.save = () => { projectDirty = true; origSave() }
 
 function updateTitle() {
   if (currentProjectPath) {
     const name = currentProjectPath.replace(/\\/g, '/').split('/').pop()
     appWindow.setTitle(`NodeProject — ${name}`)
   } else {
-    appWindow.setTitle('NodeProject')
+    appWindow.setTitle('NodeProject — Untitled')
   }
 }
 
@@ -367,6 +377,7 @@ async function saveProject(forceDialog = false) {
     const data = JSON.stringify(graph.serialize(), null, 2)
     await writeTextFile(path, data)
     currentProjectPath = path
+    projectDirty = false
     updateTitle()
   } catch (err) {
     console.error('Save failed:', err)
@@ -383,12 +394,39 @@ async function openProject() {
     graph.centerViewOnNodes()
     currentProjectPath = typeof path === 'string' ? path : path.path ?? path
     updateTitle()
-    graph.save()
+    origSave()
+    projectDirty = false
   } catch (err) {
     console.error('Open failed:', err)
   }
 }
 
+async function newProject() {
+  try {
+    if (graph.nodes.length > 0 && projectDirty) {
+      const shouldSave = await confirm('Save current project before creating a new one?', {
+        title: 'New Project',
+        kind: 'warning',
+        okLabel: 'Save',
+        cancelLabel: 'Discard'
+      })
+      if (shouldSave) {
+        await saveProject()
+        // If user cancelled the save dialog, don't clear
+        if (projectDirty) return
+      }
+    }
+    graph.clear()
+    currentProjectPath = null
+    updateTitle()
+    origSave()
+    projectDirty = false
+  } catch (err) {
+    console.error('New project failed:', err)
+  }
+}
+
+toolbar.querySelector('[data-action="new"]').addEventListener('click', () => newProject())
 toolbar.querySelector('[data-action="save"]').addEventListener('click', () => saveProject(true))
 toolbar.querySelector('[data-action="open"]').addEventListener('click', () => openProject())
 
