@@ -20,7 +20,8 @@ export const Debug = {
       el.textContent = '(no value)'
       return
     }
-    if (typeof val === 'string' && val.length > 0 && (val.includes('\\') || val.includes('/'))) {
+    const srcNode = conn?.fromSocket?.node
+    if (typeof val === 'string' && srcNode?.nodeTypeId === 'load-file') {
       try {
         const content = await readTextFile(val)
         el.textContent = content
@@ -28,7 +29,6 @@ export const Debug = {
         el.textContent = `[Error: ${err}]`
       }
     } else {
-      const srcNode = conn?.fromSocket?.node
       if (typeof val === 'number' && srcNode?.inputDataType === 'float') {
         const decimals = srcNode.floatDecimals ?? 2
         el.textContent = val.toFixed(decimals)

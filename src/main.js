@@ -52,9 +52,9 @@ function showTooltip(el) {
     left = rect.left + (rect.width - ttRect.width) / 2
     top = rect.top - ttRect.height - pad
   } else {
-    left = rect.left - ttRect.width - pad
+    left = rect.right + pad
     top = rect.top + (rect.height - ttRect.height) / 2
-    if (left < 8) left = rect.right + pad
+    if (left + ttRect.width > window.innerWidth - 8) left = rect.left - ttRect.width - pad
   }
   tooltipEl.style.left = `${left}px`
   tooltipEl.style.top = `${top}px`
