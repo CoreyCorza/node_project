@@ -39,7 +39,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid #9ae04a;
+  border: 1px solid #aaaaaa8a;
   pointer-events: none;
   opacity: 0;
 }
@@ -58,7 +58,7 @@
 }
 
 .toolbar-btn:hover {
-  background: #222222;
+  background: #1b1b1b;
   color: var(--ui-color-hover);
 }
 
