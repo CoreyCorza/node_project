@@ -7,6 +7,7 @@ import './css/socket.css'
 import './css/noodles.css'
 import './css/widgets/index.css'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { open, save, confirm } from '@tauri-apps/plugin-dialog'
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import { Graph } from './js/graph/index.js'
@@ -256,6 +257,9 @@ toolbar.innerHTML = `
       </div>
     </div>
   </div>
+  <button class="toolbar-btn" type="button" data-action="console" data-tooltip="Console" data-tooltip-position="below">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+  </button>
   <div class="toolbar-spacer"></div>
   <button class="toolbar-btn toolbar-preview-btn" type="button" data-tooltip="Preview" data-tooltip-position="below" data-preview-visible="true">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
@@ -429,6 +433,60 @@ async function newProject() {
 toolbar.querySelector('[data-action="new"]').addEventListener('click', () => newProject())
 toolbar.querySelector('[data-action="save"]').addEventListener('click', () => saveProject(true))
 toolbar.querySelector('[data-action="open"]').addEventListener('click', () => openProject())
+
+// --- System Console ---
+let consoleWindow = null
+
+async function openConsole() {
+  if (consoleWindow) {
+    try {
+      await consoleWindow.setFocus()
+      return
+    } catch {
+      consoleWindow = null
+    }
+  }
+  consoleWindow = new WebviewWindow('console', {
+    url: '/console.html',
+    title: 'Console',
+    width: 700,
+    height: 400,
+    resizable: true,
+    decorations: true
+  })
+  consoleWindow.once('tauri://destroyed', () => { consoleWindow = null })
+}
+
+toolbar.querySelector('[data-action="console"]').addEventListener('click', () => openConsole())
+
+// Hook console methods to forward to console window
+function stringify(arg) {
+  if (arg === null) return 'null'
+  if (arg === undefined) return 'undefined'
+  if (typeof arg === 'object') {
+    try { return JSON.stringify(arg, null, 2) } catch { return String(arg) }
+  }
+  return String(arg)
+}
+
+let _emitting = false
+for (const level of ['log', 'warn', 'error', 'info']) {
+  const orig = console[level].bind(console)
+  console[level] = (...args) => {
+    orig(...args)
+    if (!consoleWindow || _emitting) return
+    _emitting = true
+    try {
+      appWindow.emitTo('console', 'console-message', {
+        level,
+        text: args.map(stringify).join(' '),
+        timestamp: Date.now()
+      }).catch(() => {}).finally(() => { _emitting = false })
+    } catch {
+      _emitting = false
+    }
+  }
+}
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 's' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
