@@ -1,4 +1,5 @@
 import './css/base.css'
+import './css/split-pane.css'
 import './css/node-graph.css'
 import './css/node.css'
 import './css/socket.css'
@@ -91,13 +92,133 @@ setTimeout(() => {
 }, 150)
 
 const app = document.getElementById('app')
+
+const splitPane = document.createElement('div')
+splitPane.className = 'split-pane horizontal'
+
+const splitPaneLeft = document.createElement('div')
+splitPaneLeft.className = 'split-pane-left'
+
+const splitter = document.createElement('div')
+splitter.className = 'splitter'
+
+const splitPaneRight = document.createElement('div')
+splitPaneRight.className = 'split-pane-right'
+
+const previewPanel = document.createElement('div')
+previewPanel.className = 'preview-panel'
+previewPanel.innerHTML = `
+  <div class="preview-panel-header">Preview</div>
+  <div class="preview-panel-iframe-wrap">
+    <iframe id="preview-frame" title="Preview" sandbox="allow-scripts" srcdoc="<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'></head><body style='margin:0;padding:16px;font-family:system-ui;'><p style='color:#888'>Compiled preview will appear here.</p></body></html>"></iframe>
+  </div>
+`
+splitPaneRight.appendChild(previewPanel)
+
+splitPane.appendChild(splitPaneLeft)
+splitPane.appendChild(splitter)
+splitPane.appendChild(splitPaneRight)
+app.appendChild(splitPane)
+
 const graphContainer = document.createElement('div')
 graphContainer.className = 'node-graph'
-app.appendChild(graphContainer)
+splitPaneLeft.appendChild(graphContainer)
+
+const previewIframe = previewPanel.querySelector('iframe')
+
+function initSplitter() {
+  const storageKey = 'node-graph-split'
+  let rightSize = 40
+  try {
+    const s = JSON.parse(localStorage.getItem(storageKey) || '{}')
+    if (typeof s.previewSize === 'number') rightSize = Math.max(15, Math.min(85, s.previewSize))
+  } catch {}
+  splitPaneRight.style.flex = `0 0 ${rightSize}%`
+
+  let dragging = false
+  let startX = 0
+  let startRightSize = 0
+  let rafId = null
+
+  splitter.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return
+    e.preventDefault()
+    e.stopPropagation()
+    if (rafId) cancelAnimationFrame(rafId)
+    rafId = null
+    dragging = true
+    splitter.classList.add('dragging')
+    startX = e.clientX
+    const flexMatch = splitPaneRight.style.flex?.match(/(\d+(?:\.\d+)?)%/)
+    startRightSize = flexMatch ? parseFloat(flexMatch[1]) : 40
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+    document.body.style.pointerEvents = 'none'
+
+    const onMove = (ev) => {
+      if (!dragging) return
+      ev.preventDefault()
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        rafId = null
+        const total = splitPane.offsetWidth
+        if (total <= 0) return
+        const dx = ev.clientX - startX
+        const deltaPercent = (dx / total) * 100
+        let newRight = startRightSize - deltaPercent
+        newRight = Math.max(15, Math.min(85, newRight))
+        splitPaneRight.style.flex = `0 0 ${newRight}%`
+      })
+    }
+
+    const onUp = () => {
+      dragging = false
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = null
+      splitter.classList.remove('dragging')
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      document.body.style.pointerEvents = ''
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+      const flex = splitPaneRight.style.flex
+      const match = flex?.match(/(\d+(?:\.\d+)?)%/)
+      if (match) {
+        try {
+          const s = JSON.parse(localStorage.getItem(storageKey) || '{}')
+          s.previewSize = parseFloat(match[1])
+          localStorage.setItem(storageKey, JSON.stringify(s))
+        } catch {}
+      }
+    }
+
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  })
+}
+
+initSplitter()
+
+function setPreviewVisible(visible) {
+  splitPane.classList.toggle('preview-hidden', !visible)
+  const btn = document.querySelector('.toolbar-preview-btn')
+  if (btn) {
+    btn.dataset.previewVisible = String(visible)
+    btn.classList.toggle('active', visible)
+  }
+  try {
+    const s = JSON.parse(localStorage.getItem('node-graph-split') || '{}')
+    s.previewVisible = visible
+    localStorage.setItem('node-graph-split', JSON.stringify(s))
+  } catch {}
+}
 
 const toolbar = document.createElement('div')
 toolbar.className = 'toolbar'
 toolbar.innerHTML = `
+  <button class="toolbar-btn toolbar-preview-btn" type="button" data-tooltip="Preview" data-tooltip-position="left" data-preview-visible="true">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+  </button>
   <button class="toolbar-btn" type="button" data-tooltip="Add" data-tooltip-position="left">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
   </button>
@@ -127,7 +248,7 @@ toolbar.innerHTML = `
     </div>
   </div>
 `
-app.appendChild(toolbar)
+splitPaneLeft.appendChild(toolbar)
 
 toolbar.addEventListener('click', (e) => {
   const btn = e.target.closest('.toolbar-btn')
@@ -229,13 +350,29 @@ settingsBtn.addEventListener('click', (e) => {
   if (!settingsPopover.hidden) {
     document.body.classList.add('popover-open')
     tooltipEl.classList.remove('visible')
-  } else {
-    document.body.classList.remove('popover-open')
-  }
-  if (!settingsPopover.hidden) {
+    const btnRect = settingsBtn.getBoundingClientRect()
+    settingsPopover.style.left = ''
+    settingsPopover.style.top = ''
+    settingsPopover.style.right = ''
+    settingsPopover.style.bottom = ''
+    settingsPopover.offsetHeight
+    const pw = settingsPopover.offsetWidth
+    const ph = settingsPopover.offsetHeight
+    const gap = 4
+    const pad = 8
+    let left = btnRect.left + (btnRect.width - pw) / 2
+    if (left < pad) left = pad
+    if (left + pw > window.innerWidth - pad) left = window.innerWidth - pw - pad
+    let top = btnRect.top - ph - gap
+    if (top < pad) top = btnRect.bottom + gap
+    if (top + ph > window.innerHeight - pad) top = window.innerHeight - ph - pad
+    settingsPopover.style.left = left + 'px'
+    settingsPopover.style.top = top + 'px'
     settingsMenuItems.forEach(el => {
       el.classList.toggle('active', graph.noodleStyle === el.dataset.noodleStyle)
     })
+  } else {
+    document.body.classList.remove('popover-open')
   }
 })
 
@@ -271,6 +408,17 @@ const tooltipsWidget = createBooleanWidget(tooltipsState, {
   }
 })
 tooltipsContainer.appendChild(tooltipsWidget)
+
+const previewBtn = toolbar.querySelector('.toolbar-preview-btn')
+try {
+  const s = JSON.parse(localStorage.getItem('node-graph-split') || '{}')
+  if (s.previewVisible === false) setPreviewVisible(false)
+} catch {}
+previewBtn.addEventListener('click', (e) => {
+  e.stopPropagation()
+  const visible = previewBtn.dataset.previewVisible !== 'true'
+  setPreviewVisible(visible)
+})
 
 document.addEventListener('click', (e) => {
   if (!settingsWrap.contains(e.target)) closeSettingsPopover()

@@ -50,12 +50,7 @@ body.ready {
 }
 
 .toolbar {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  bottom: 6px;
   width: 26px;
-  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,6 +59,7 @@ body.ready {
   background: #1a1a1a;
   border-radius: 4px;
   box-shadow: 0px 0 8px rgba(0, 0, 0, 0.3);
+  align-self: stretch;
 }
 
 .toolbar-spacer {
@@ -211,7 +207,7 @@ body.ready {
 }
 
 .toolbar-btn:hover {
-  background: #2a2a2a;
+  background: #222222;
   color: var(--ui-color-hover);
 }
 
@@ -220,16 +216,14 @@ body.ready {
 }
 
 .settings-popover {
-  position: absolute;
-  right: 100%;
-  bottom: 0;
-  margin-right: 4px;
+  position: fixed;
+  left: 100px;
   padding: 4px;
   background: #1a1a1a;
   border: 1px solid #333;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  z-index: 100;
+  z-index: 10000;
 }
 
 .settings-popover-menu {
