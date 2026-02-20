@@ -5,6 +5,8 @@ import './css/socket.css'
 import './css/noodles.css'
 import './css/widgets/index.css'
 import { getCurrentWindow } from '@tauri-apps/api/window'
+import { open, save } from '@tauri-apps/plugin-dialog'
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import { Graph } from './js/graph/index.js'
 import { createBooleanWidget } from './js/graph/widgets/BooleanWidget.js'
 
@@ -98,13 +100,13 @@ app.appendChild(graphContainer)
 const toolbar = document.createElement('div')
 toolbar.className = 'toolbar'
 toolbar.innerHTML = `
-  <button class="toolbar-btn" type="button" data-tooltip="Add" data-tooltip-position="left">
+  <button class="toolbar-btn" type="button" data-action="add" data-tooltip="Add" data-tooltip-position="left">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
   </button>
-  <button class="toolbar-btn" type="button" data-tooltip="Open" data-tooltip-position="left">
+  <button class="toolbar-btn" type="button" data-action="open" data-tooltip="Open" data-tooltip-position="left">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
   </button>
-  <button class="toolbar-btn" type="button" data-tooltip="Save" data-tooltip-position="left">
+  <button class="toolbar-btn" type="button" data-action="save" data-tooltip="Save" data-tooltip-position="left">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
   </button>
   <div class="toolbar-spacer"></div>
@@ -212,6 +214,68 @@ try {
   graph.load(defaultGraph())
 }
 graph.centerViewOnNodes()
+
+// --- Project save/load ---
+const crzFilter = { name: 'CRZ Project', extensions: ['crz'] }
+let currentProjectPath = null
+
+function updateTitle() {
+  if (currentProjectPath) {
+    const name = currentProjectPath.replace(/\\/g, '/').split('/').pop()
+    appWindow.setTitle(`NodeProject — ${name}`)
+  } else {
+    appWindow.setTitle('NodeProject')
+  }
+}
+
+async function saveProject(forceDialog = false) {
+  try {
+    let path = currentProjectPath
+    if (!path || forceDialog) {
+      path = await save({ filters: [crzFilter], defaultPath: currentProjectPath || undefined })
+      if (!path) return
+      if (!path.endsWith('.crz')) path += '.crz'
+    }
+    const data = JSON.stringify(graph.serialize(), null, 2)
+    await writeTextFile(path, data)
+    currentProjectPath = path
+    updateTitle()
+  } catch (err) {
+    console.error('Save failed:', err)
+  }
+}
+
+async function openProject() {
+  try {
+    const path = await open({ multiple: false, directory: false, filters: [crzFilter] })
+    if (!path) return
+    const raw = await readTextFile(typeof path === 'string' ? path : path.path ?? path)
+    const data = JSON.parse(raw)
+    graph.load(data?.nodes?.length ? data : { nodes: [], connections: [] })
+    graph.centerViewOnNodes()
+    currentProjectPath = typeof path === 'string' ? path : path.path ?? path
+    updateTitle()
+    graph.save()
+  } catch (err) {
+    console.error('Open failed:', err)
+  }
+}
+
+toolbar.querySelector('[data-action="save"]').addEventListener('click', () => saveProject(true))
+toolbar.querySelector('[data-action="open"]').addEventListener('click', () => openProject())
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 's' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
+    e.preventDefault()
+    saveProject(true)
+  } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    saveProject()
+  } else if (e.key === 'o' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    openProject()
+  }
+})
 
 const settingsWrap = toolbar.querySelector('.toolbar-settings-wrap')
 const settingsBtn = toolbar.querySelector('.toolbar-settings-btn')

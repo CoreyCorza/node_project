@@ -72,6 +72,13 @@ export class Graph {
         if (n.floatRound !== undefined) base.floatRound = n.floatRound
         if (n.floatDecimals !== undefined) base.floatDecimals = n.floatDecimals
       }
+      if (n.nodeTypeId === 'image') {
+        if (n.selectedFilePath) base.selectedFilePath = n.selectedFilePath
+        if (n.imageWidth !== undefined) base.imageWidth = n.imageWidth
+        if (n.imageHeight !== undefined) base.imageHeight = n.imageHeight
+        if (n.imageAltEnabled !== undefined) base.imageAltEnabled = n.imageAltEnabled
+        if (n.imageAltText !== undefined) base.imageAltText = n.imageAltText
+      }
       return base
     })
     const connections = this.noodles
@@ -101,7 +108,12 @@ export class Graph {
         inputDataType: n.inputDataType,
         booleanValue: n.booleanValue,
         floatRound: n.floatRound,
-        floatDecimals: n.floatDecimals
+        floatDecimals: n.floatDecimals,
+        selectedFilePath: n.selectedFilePath,
+        imageWidth: n.imageWidth,
+        imageHeight: n.imageHeight,
+        imageAltEnabled: n.imageAltEnabled,
+        imageAltText: n.imageAltText
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -115,6 +127,14 @@ export class Graph {
           toggle.classList.toggle('on', node.booleanValue)
           toggle.setAttribute('aria-checked', node.booleanValue)
         }
+      }
+      if (n.nodeTypeId === 'image') {
+        if (n.selectedFilePath) node.selectedFilePath = n.selectedFilePath
+        if (n.imageWidth !== undefined) node.imageWidth = n.imageWidth
+        if (n.imageHeight !== undefined) node.imageHeight = n.imageHeight
+        if (n.imageAltEnabled !== undefined) node.imageAltEnabled = n.imageAltEnabled
+        if (n.imageAltText !== undefined) node.imageAltText = n.imageAltText
+        node._imageWidget?.update?.()
       }
       nodeMap[n.id] = node
     }
@@ -364,6 +384,13 @@ export class Graph {
         if (n.floatRound !== undefined) base.floatRound = n.floatRound
         if (n.floatDecimals !== undefined) base.floatDecimals = n.floatDecimals
       }
+      if (n.nodeTypeId === 'image') {
+        if (n.selectedFilePath) base.selectedFilePath = n.selectedFilePath
+        if (n.imageWidth !== undefined) base.imageWidth = n.imageWidth
+        if (n.imageHeight !== undefined) base.imageHeight = n.imageHeight
+        if (n.imageAltEnabled !== undefined) base.imageAltEnabled = n.imageAltEnabled
+        if (n.imageAltText !== undefined) base.imageAltText = n.imageAltText
+      }
       return base
     })
     const connections = this.noodles
@@ -409,7 +436,12 @@ export class Graph {
         inputDataType: n.inputDataType,
         booleanValue: n.booleanValue,
         floatRound: n.floatRound,
-        floatDecimals: n.floatDecimals
+        floatDecimals: n.floatDecimals,
+        selectedFilePath: n.selectedFilePath,
+        imageWidth: n.imageWidth,
+        imageHeight: n.imageHeight,
+        imageAltEnabled: n.imageAltEnabled,
+        imageAltText: n.imageAltText
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -423,6 +455,14 @@ export class Graph {
           toggle.classList.toggle('on', node.booleanValue)
           toggle.setAttribute('aria-checked', node.booleanValue)
         }
+      }
+      if (n.nodeTypeId === 'image') {
+        if (n.selectedFilePath) node.selectedFilePath = n.selectedFilePath
+        if (n.imageWidth !== undefined) node.imageWidth = n.imageWidth
+        if (n.imageHeight !== undefined) node.imageHeight = n.imageHeight
+        if (n.imageAltEnabled !== undefined) node.imageAltEnabled = n.imageAltEnabled
+        if (n.imageAltText !== undefined) node.imageAltText = n.imageAltText
+        node._imageWidget?.update?.()
       }
       nodeMap[n.id] = node
       this.selectedNodes.add(node)
@@ -572,6 +612,13 @@ export class Graph {
       if (options.booleanValue !== undefined) node.booleanValue = options.booleanValue
       if (options.floatRound !== undefined) node.floatRound = options.floatRound
       if (options.floatDecimals !== undefined) node.floatDecimals = options.floatDecimals
+    }
+    if (options.nodeTypeId === 'image') {
+      if (options.selectedFilePath) node.selectedFilePath = options.selectedFilePath
+      if (options.imageWidth !== undefined) node.imageWidth = options.imageWidth
+      if (options.imageHeight !== undefined) node.imageHeight = options.imageHeight
+      if (options.imageAltEnabled !== undefined) node.imageAltEnabled = options.imageAltEnabled
+      if (options.imageAltText !== undefined) node.imageAltText = options.imageAltText
     }
     this.nodes.push(node)
     this.nodesEl.appendChild(node.createElement())
