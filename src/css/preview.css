@@ -8,11 +8,46 @@
 
 .preview-panel-header {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 4px 8px;
   font-size: 0.65rem;
   color: #888;
   text-transform: uppercase;
   border-bottom: 1px solid #333;
+}
+
+.preview-panel-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.preview-panel-popout-btn {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: #888;
+  cursor: default;
+}
+
+.preview-panel-popout-btn:hover {
+  background: #333;
+  color: #ccc;
+}
+
+.preview-panel-popout-btn svg {
+  display: block;
+  width: 10px;
+  height: 10px;
 }
 
 .preview-panel-iframe-wrap {
