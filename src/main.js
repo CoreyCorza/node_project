@@ -1,4 +1,5 @@
 import './css/base.css'
+import './css/toolbar.css'
 import './css/split-pane.css'
 import './css/node-graph.css'
 import './css/node.css'
@@ -39,27 +40,36 @@ document.body.appendChild(tooltipEl)
 
 let tooltipShowTimeout = null
 let tooltipHideTimeout = null
+const TOOLTIP_SHOW_DELAY = 20
+const TOOLTIP_HIDE_DELAY = 2
 
 function showTooltip(el) {
   const text = el.dataset.tooltip
   if (!text) return
-  clearTimeout(tooltipHideTimeout)
   tooltipEl.textContent = text
   tooltipEl.style.left = '-9999px'
   tooltipEl.style.top = '0'
   tooltipEl.classList.add('visible')
+  tooltipEl.offsetHeight
   const rect = el.getBoundingClientRect()
   const ttRect = tooltipEl.getBoundingClientRect()
-  const pad = 6
+  const pad = 8
+  const vw = window.innerWidth
+  const vh = window.innerHeight
   let left, top
   if (el.dataset.tooltipPosition === 'above') {
     left = rect.left + (rect.width - ttRect.width) / 2
     top = rect.top - ttRect.height - pad
+  } else if (el.dataset.tooltipPosition === 'below') {
+    left = rect.left + (rect.width - ttRect.width) / 2
+    top = rect.bottom + pad
   } else {
     left = rect.right + pad
     top = rect.top + (rect.height - ttRect.height) / 2
-    if (left + ttRect.width > window.innerWidth - 8) left = rect.left - ttRect.width - pad
+    if (left + ttRect.width > vw - pad) left = rect.left - ttRect.width - pad
   }
+  left = Math.max(pad, Math.min(vw - ttRect.width - pad, left))
+  top = Math.max(pad, Math.min(vh - ttRect.height - pad, top))
   tooltipEl.style.left = `${left}px`
   tooltipEl.style.top = `${top}px`
 }
@@ -67,22 +77,25 @@ function showTooltip(el) {
 document.body.addEventListener('mouseover', e => {
   if (document.body.classList.contains('popover-open') || document.body.classList.contains('context-menu-open')) {
     clearTimeout(tooltipShowTimeout)
-    tooltipHideTimeout = setTimeout(() => tooltipEl.classList.remove('visible'), 50)
+    clearTimeout(tooltipHideTimeout)
+    tooltipHideTimeout = setTimeout(() => tooltipEl.classList.remove('visible'), TOOLTIP_HIDE_DELAY)
     return
   }
   const el = e.target.closest('[data-tooltip]')
   if (!el) {
     clearTimeout(tooltipShowTimeout)
-    tooltipHideTimeout = setTimeout(() => tooltipEl.classList.remove('visible'), 50)
+    tooltipHideTimeout = setTimeout(() => tooltipEl.classList.remove('visible'), TOOLTIP_HIDE_DELAY)
     return
   }
-  clearTimeout(tooltipShowTimeout)
   clearTimeout(tooltipHideTimeout)
-  showTooltip(el)
+  clearTimeout(tooltipShowTimeout)
+  tooltipShowTimeout = setTimeout(() => showTooltip(el), TOOLTIP_SHOW_DELAY)
 })
 document.body.addEventListener('mouseout', e => {
   if (!e.relatedTarget?.closest?.('[data-tooltip]')) {
-    tooltipHideTimeout = setTimeout(() => tooltipEl.classList.remove('visible'), 50)
+    clearTimeout(tooltipShowTimeout)
+    tooltipShowTimeout = null
+    tooltipHideTimeout = setTimeout(() => tooltipEl.classList.remove('visible'), TOOLTIP_HIDE_DELAY)
   }
 })
 
@@ -116,9 +129,10 @@ splitPane.appendChild(splitter)
 splitPane.appendChild(splitPaneRight)
 app.appendChild(splitPane)
 
+const graphWrap = document.createElement('div')
+graphWrap.className = 'node-graph-wrap'
 const graphContainer = document.createElement('div')
 graphContainer.className = 'node-graph'
-splitPaneLeft.appendChild(graphContainer)
 
 
 function initSplitter() {
@@ -211,21 +225,15 @@ function setPreviewVisible(visible) {
 const toolbar = document.createElement('div')
 toolbar.className = 'toolbar'
 toolbar.innerHTML = `
-  <button class="toolbar-btn toolbar-preview-btn" type="button" data-tooltip="Preview" data-tooltip-position="left" data-preview-visible="true">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-  </button>
-  <button class="toolbar-btn" type="button" data-action="add" data-tooltip="Add" data-tooltip-position="left">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-  </button>
-  <button class="toolbar-btn" type="button" data-action="open" data-tooltip="Open" data-tooltip-position="left">
+  <button class="toolbar-btn" type="button" data-action="open" data-tooltip="Open" data-tooltip-position="below">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
   </button>
-  <button class="toolbar-btn" type="button" data-action="save" data-tooltip="Save" data-tooltip-position="left">
+  <button class="toolbar-btn" type="button" data-action="save" data-tooltip="Save" data-tooltip-position="below">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
   </button>
-  <div class="toolbar-spacer"></div>
+  <div class="toolbar-divider"></div>
   <div class="toolbar-settings-wrap">
-    <button class="toolbar-btn toolbar-settings-btn" type="button" data-tooltip="Settings" data-tooltip-position="left">
+    <button class="toolbar-btn toolbar-settings-btn" type="button" data-tooltip="Settings" data-tooltip-position="below">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -242,8 +250,14 @@ toolbar.innerHTML = `
       </div>
     </div>
   </div>
+  <div class="toolbar-spacer"></div>
+  <button class="toolbar-btn toolbar-preview-btn" type="button" data-tooltip="Preview" data-tooltip-position="below" data-preview-visible="true">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+  </button>
 `
 splitPaneLeft.appendChild(toolbar)
+graphWrap.appendChild(graphContainer)
+splitPaneLeft.appendChild(graphWrap)
 
 toolbar.addEventListener('click', (e) => {
   const btn = e.target.closest('.toolbar-btn')

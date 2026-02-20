@@ -19,17 +19,18 @@
   min-height: 0;
   overflow: hidden;
   display: flex;
-  flex-direction: row;
-}
-
-.split-pane-left .node-graph {
-  flex: 1;
-  min-width: 0;
+  flex-direction: column;
 }
 
 .split-pane-left .toolbar {
   flex-shrink: 0;
-  margin: 6px 6px 6px 0;
+}
+
+.node-graph-wrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
 }
 
 .split-pane-right {

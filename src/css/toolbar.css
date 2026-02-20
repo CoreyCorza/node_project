@@ -1,0 +1,129 @@
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: #1a1a1a00;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: #333;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.toolbar-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--ui-color);
+  cursor: default;
+}
+
+.toolbar-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid #9ae04a;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.toolbar-btn.flash::after {
+  animation: toolbar-flash 0.35s ease-out forwards;
+}
+
+@keyframes toolbar-flash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.toolbar-btn svg {
+  display: block;
+}
+
+.toolbar-btn:hover {
+  background: #222222;
+  color: var(--ui-color-hover);
+}
+
+.toolbar-settings-wrap {
+  position: relative;
+}
+
+.settings-popover {
+  position: fixed;
+  padding: 4px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+}
+
+.settings-popover-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.settings-menu-label {
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.settings-menu-item {
+  padding: 4px 8px;
+  font-size: var(--ui-font-size);
+  color: var(--ui-color);
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: default;
+  text-align: left;
+}
+
+.settings-menu-item:hover {
+  background: #2a2a2a;
+  color: var(--ui-color-hover);
+}
+
+.settings-menu-item.active {
+  color: #abe04a;
+}
+
+.settings-menu-divider {
+  height: 1px;
+  margin: 4px 8px;
+  background: #333;
+}
+
+.settings-menu-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  gap: 8px;
+}
+
+.settings-menu-toggle-label {
+  font-size: var(--ui-font-size);
+  color: var(--ui-color);
+}

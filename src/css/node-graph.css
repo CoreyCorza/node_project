@@ -64,7 +64,7 @@
 .zoom-toast {
   position: absolute;
   bottom: 8px;
-  right: 40px;
+  left: 8px;
   padding: 4px 8px;
   font-size: var(--ui-font-size);
   color: var(--ui-color);

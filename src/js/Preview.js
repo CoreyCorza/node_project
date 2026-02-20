@@ -9,7 +9,7 @@ export class Preview {
     this.el.innerHTML = `
       <div class="preview-panel-header">Preview</div>
       <div class="preview-panel-iframe-wrap">
-        <iframe id="preview-frame" title="Preview" sandbox="allow-scripts"></iframe>
+        <iframe id="preview-frame" sandbox="allow-scripts" aria-label="Preview"></iframe>
       </div>
     `
     this.iframe = this.el.querySelector('iframe')
