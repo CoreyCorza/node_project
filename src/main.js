@@ -7,11 +7,11 @@ import './css/socket.css'
 import './css/noodles.css'
 import './css/widgets/index.css'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { open, save, confirm } from '@tauri-apps/plugin-dialog'
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import { Graph } from './js/graph/index.js'
 import { Preview } from './js/Preview.js'
+import { Console } from './js/Console.js'
 import { createBooleanWidget } from './js/graph/widgets/BooleanWidget.js'
 
 function disableNativeTooltips() {
@@ -254,6 +254,9 @@ toolbar.innerHTML = `
         <div class="settings-menu-divider"></div>
         <div class="settings-menu-label">Interface</div>
         <div class="settings-menu-toggle-row" data-tooltips-container></div>
+        <div class="settings-menu-divider"></div>
+        <div class="settings-menu-label">Developer</div>
+        <div class="settings-menu-toggle-row" data-debug-container></div>
       </div>
     </div>
   </div>
@@ -435,58 +438,10 @@ toolbar.querySelector('[data-action="save"]').addEventListener('click', () => sa
 toolbar.querySelector('[data-action="open"]').addEventListener('click', () => openProject())
 
 // --- System Console ---
-let consoleWindow = null
+const systemConsole = new Console({ getDebugEnabled: () => debugState.debug })
+systemConsole.instrumentGraph(graph)
 
-async function openConsole() {
-  if (consoleWindow) {
-    try {
-      await consoleWindow.setFocus()
-      return
-    } catch {
-      consoleWindow = null
-    }
-  }
-  consoleWindow = new WebviewWindow('console', {
-    url: '/console.html',
-    title: 'Console',
-    width: 700,
-    height: 400,
-    resizable: true,
-    decorations: true
-  })
-  consoleWindow.once('tauri://destroyed', () => { consoleWindow = null })
-}
-
-toolbar.querySelector('[data-action="console"]').addEventListener('click', () => openConsole())
-
-// Hook console methods to forward to console window
-function stringify(arg) {
-  if (arg === null) return 'null'
-  if (arg === undefined) return 'undefined'
-  if (typeof arg === 'object') {
-    try { return JSON.stringify(arg, null, 2) } catch { return String(arg) }
-  }
-  return String(arg)
-}
-
-let _emitting = false
-for (const level of ['log', 'warn', 'error', 'info']) {
-  const orig = console[level].bind(console)
-  console[level] = (...args) => {
-    orig(...args)
-    if (!consoleWindow || _emitting) return
-    _emitting = true
-    try {
-      appWindow.emitTo('console', 'console-message', {
-        level,
-        text: args.map(stringify).join(' '),
-        timestamp: Date.now()
-      }).catch(() => {}).finally(() => { _emitting = false })
-    } catch {
-      _emitting = false
-    }
-  }
-}
+toolbar.querySelector('[data-action="console"]').addEventListener('click', () => systemConsole.open())
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 's' && (e.ctrlKey || e.metaKey) && e.shiftKey) {
@@ -575,6 +530,26 @@ const tooltipsWidget = createBooleanWidget(tooltipsState, {
   }
 })
 tooltipsContainer.appendChild(tooltipsWidget)
+
+// Debug mode toggle
+const debugContainer = toolbar.querySelector('[data-debug-container]')
+const debugState = { debug: true }
+try {
+  const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+  if (s.debug === false) debugState.debug = false
+} catch {}
+const debugWidget = createBooleanWidget(debugState, {
+  label: 'Debug Mode',
+  valueKey: 'debug',
+  onChange: () => {
+    try {
+      const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+      s.debug = debugState.debug
+      localStorage.setItem('node-graph-settings', JSON.stringify(s))
+    } catch {}
+  }
+})
+debugContainer.appendChild(debugWidget)
 
 const previewBtn = toolbar.querySelector('.toolbar-preview-btn')
 try {

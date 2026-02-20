@@ -37,6 +37,13 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": ["crz"],
+        "mimeType": "application/x-crz",
+        "description": "CRZ Project File"
+      }
     ]
   }
 }

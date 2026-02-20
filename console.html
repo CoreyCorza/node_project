@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Console</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a1a1a;
+      color: #d4d4d4;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* --- Toolbar --- */
+    .console-toolbar {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      background: #252525;
+      border-bottom: 1px solid #333;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .console-toolbar button {
+      background: none;
+      border: 1px solid #555;
+      color: #aaa;
+      padding: 2px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 11px;
+      -webkit-appearance: none;
+    }
+    .console-toolbar button:hover { background: #333; color: #ddd; }
+    .spacer { flex: 1; }
+
+    /* --- Font size control --- */
+    .font-size-control {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .font-size-control label {
+      color: #555;
+      font-size: 10px;
+    }
+    .font-size-slider {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 55px;
+      height: 4px;
+      background: #333;
+      border-radius: 2px;
+      outline: none;
+      cursor: default;
+    }
+    .font-size-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      background: #666;
+      border-radius: 50%;
+      cursor: default;
+      transition: background 0.2s;
+    }
+    .font-size-slider::-webkit-slider-thumb:hover { background: #888; }
+    .font-size-value {
+      color: #666;
+      font-size: 10px;
+      min-width: 16px;
+      text-align: center;
+    }
+
+    /* --- Dropdown menu --- */
+    .dropdown {
+      position: relative;
+    }
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      padding: 2px 4px !important;
+    }
+    .menu-btn svg {
+      transition: transform 0.2s ease;
+    }
+    .menu-btn.open svg {
+      transform: rotate(90deg);
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: #2b2b2b;
+      min-width: 190px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      border: 1px solid #3d3d3d;
+      border-radius: 4px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-content button {
+      width: 100%;
+      padding: 8px 14px;
+      background: transparent;
+      border: none !important;
+      border-radius: 0 !important;
+      color: #ccc;
+      text-align: left;
+      cursor: default;
+      font-size: 12px;
+    }
+    .dropdown-content button:hover { background: #383838; color: #fff; }
+    .dropdown-content button.active-mode { background: #4772B3; color: #fff; }
+
+    /* --- Mode status --- */
+    .mode-status {
+      color: #4772B3;
+      font-size: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* --- Console output --- */
+    .console-output {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 8px;
+    }
+    .console-output::-webkit-scrollbar { width: 8px; }
+    .console-output::-webkit-scrollbar-track { background: #1a1a1a; }
+    .console-output::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    .console-output::-webkit-scrollbar-thumb:hover { background: #555; }
+    .console-entry {
+      padding: 2px 0;
+      border-bottom: 1px solid #2a2a2a;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: flex;
+      gap: 8px;
+    }
+    .console-entry .time {
+      color: #666;
+      flex-shrink: 0;
+    }
+    .console-entry .msg { flex: 1; }
+    .console-entry.log .msg { color: #d4d4d4; }
+    .console-entry.info .msg { color: #6cb6ff; }
+    .console-entry.warn .msg { color: #e5c07b; }
+    .console-entry.error .msg { color: #e06c75; }
+    .empty-msg {
+      color: #555;
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="console-toolbar">
+    <div class="font-size-control">
+      <label>Size</label>
+      <input type="range" id="font-size-slider" class="font-size-slider" min="10" max="22" value="12">
+      <span id="font-size-value" class="font-size-value">12</span>
+    </div>
+    <div class="spacer"></div>
+    <span class="mode-status" id="mode-status">Standard</span>
+    <div class="spacer"></div>
+    <button id="clear-btn">Clear</button>
+    <div class="dropdown">
+      <button class="menu-btn" id="menu-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+      <div class="dropdown-content" id="dropdown-content">
+        <button id="opt-global">Always on Top</button>
+        <button id="opt-picker">Always on Top of...</button>
+        <button id="opt-standard" class="active-mode">Standard Window</button>
+      </div>
+    </div>
+  </div>
+  <div class="console-output" id="output">
+    <div class="empty-msg">Waiting for console output...</div>
+  </div>
+  <script type="module">
+    import { listen } from '@tauri-apps/api/event'
+    import { getCurrentWindow } from '@tauri-apps/api/window'
+    import { invoke } from '@tauri-apps/api/core'
+
+    const appWindow = getCurrentWindow()
+    const output = document.getElementById('output')
+    const clearBtn = document.getElementById('clear-btn')
+    const menuBtn = document.getElementById('menu-btn')
+    const dropdownContent = document.getElementById('dropdown-content')
+    const optGlobal = document.getElementById('opt-global')
+    const optPicker = document.getElementById('opt-picker')
+    const optStandard = document.getElementById('opt-standard')
+    const modeStatus = document.getElementById('mode-status')
+    const fontSlider = document.getElementById('font-size-slider')
+    const fontValue = document.getElementById('font-size-value')
+    let hasEntries = false
+    let currentMode = 'standard'
+
+    // --- Font size ---
+    function setFontSize(size, save = true) {
+      output.style.fontSize = size + 'px'
+      fontSlider.value = size
+      fontValue.textContent = size
+      if (save) {
+        try {
+          const s = JSON.parse(localStorage.getItem('console-settings') || '{}')
+          s.fontSize = size
+          localStorage.setItem('console-settings', JSON.stringify(s))
+        } catch {}
+      }
+    }
+
+    try {
+      const s = JSON.parse(localStorage.getItem('console-settings') || '{}')
+      if (s.fontSize) setFontSize(s.fontSize, false)
+    } catch {}
+
+    fontSlider.addEventListener('input', (e) => setFontSize(parseInt(e.target.value)))
+
+    // --- Dropdown menu ---
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      const open = dropdownContent.classList.toggle('show')
+      menuBtn.classList.toggle('open', open)
+    })
+
+    document.addEventListener('click', () => {
+      dropdownContent.classList.remove('show')
+      menuBtn.classList.remove('open')
+    })
+
+    function updateModeButtons() {
+      optGlobal.classList.toggle('active-mode', currentMode === 'global')
+      optPicker.classList.toggle('active-mode', currentMode === 'anchored')
+      optStandard.classList.toggle('active-mode', currentMode === 'standard')
+    }
+
+    function closeDropdown() {
+      dropdownContent.classList.remove('show')
+      menuBtn.classList.remove('open')
+    }
+
+    function saveSetting(key, value) {
+      try {
+        const s = JSON.parse(localStorage.getItem('console-settings') || '{}')
+        s[key] = value
+        localStorage.setItem('console-settings', JSON.stringify(s))
+      } catch {}
+    }
+
+    // --- Mode: Always on Top (Global) ---
+    optGlobal.addEventListener('click', async () => {
+      await invoke('stop_anchor').catch(() => {})
+      await appWindow.setAlwaysOnTop(true)
+      await invoke('set_global_mode').catch(() => {})
+      currentMode = 'global'
+      modeStatus.textContent = 'Global'
+      updateModeButtons()
+      closeDropdown()
+      saveSetting('mode', 'global')
+    })
+
+    // --- Mode: Always on Top of... (Picker) ---
+    optPicker.addEventListener('click', async () => {
+      await invoke('stop_anchor').catch(() => {})
+      await invoke('clear_global_mode').catch(() => {})
+      await appWindow.setAlwaysOnTop(false)
+      modeStatus.textContent = 'Anchored: Click a window...'
+      closeDropdown()
+      try {
+        const title = await invoke('start_window_picker')
+        currentMode = 'anchored'
+        modeStatus.textContent = 'Anchored: ' + title
+        updateModeButtons()
+        saveSetting('mode', 'anchored')
+      } catch {
+        // Cancelled or failed — revert to standard
+        currentMode = 'standard'
+        modeStatus.textContent = 'Standard'
+        updateModeButtons()
+      }
+    })
+
+    // --- Mode: Standard ---
+    optStandard.addEventListener('click', async () => {
+      await invoke('stop_anchor').catch(() => {})
+      await invoke('clear_global_mode').catch(() => {})
+      await appWindow.setAlwaysOnTop(false)
+      currentMode = 'standard'
+      modeStatus.textContent = 'Standard'
+      updateModeButtons()
+      closeDropdown()
+      saveSetting('mode', 'standard')
+    })
+
+    // Load saved mode
+    try {
+      const s = JSON.parse(localStorage.getItem('console-settings') || '{}')
+      if (s.mode === 'global') {
+        appWindow.setAlwaysOnTop(true)
+        invoke('set_global_mode').catch(() => {})
+        currentMode = 'global'
+        modeStatus.textContent = 'Global'
+        updateModeButtons()
+      }
+    } catch {}
+
+    // --- Console output ---
+    function formatTime(ts) {
+      const d = new Date(ts)
+      return d.toLocaleTimeString('en-GB', { hour12: false }) + '.' + String(d.getMilliseconds()).padStart(3, '0')
+    }
+
+    function addEntry(level, text, timestamp) {
+      if (!hasEntries) {
+        output.innerHTML = ''
+        hasEntries = true
+      }
+      const el = document.createElement('div')
+      el.className = `console-entry ${level}`
+      el.innerHTML = `<span class="time">${formatTime(timestamp)}</span><span class="msg"></span>`
+      el.querySelector('.msg').textContent = text
+      output.appendChild(el)
+      output.scrollTop = output.scrollHeight
+    }
+
+    clearBtn.addEventListener('click', () => {
+      output.innerHTML = '<div class="empty-msg">Console cleared.</div>'
+      hasEntries = false
+    })
+
+    listen('console-message', (event) => {
+      const { level, text, timestamp } = event.payload
+      addEntry(level, text, timestamp)
+    })
+
+    listen('anchor-lost', () => {
+      invoke('clear_global_mode').catch(() => {})
+      currentMode = 'standard'
+      modeStatus.textContent = 'Standard'
+      updateModeButtons()
+      saveSetting('mode', 'standard')
+    })
+  </script>
+</body>
+</html>
