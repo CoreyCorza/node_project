@@ -1,0 +1,119 @@
+.node[data-node-type="image"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.node[data-node-type="image"] .node-body {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.node[data-node-type="image"] .node-widget-section {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+
+.node[data-node-type="image"] .node-widget-section .node-widget {
+  position: absolute;
+  inset: 0;
+}
+
+.widget-image {
+  position: absolute;
+  inset: 0;
+  margin: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #202020;
+}
+
+.widget-image-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.widget-image-input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 4px;
+  font-size: 0.65rem;
+  font-family: inherit;
+  color: #ccc;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.widget-image-input:focus {
+  border-color: #555;
+}
+
+.widget-image-input::placeholder {
+  color: #555;
+}
+
+.node[data-node-type="image"] .socket-row.input {
+  flex-wrap: nowrap;
+}
+
+.node[data-node-type="image"] .socket-row.input .socket-label {
+  flex: 0 0 auto;
+  width: 36px;
+}
+
+.widget-image-socket-int {
+  flex: 1;
+  min-width: 0;
+  margin-left: 2px;
+}
+
+.widget-image-alt-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px 4px;
+  flex-shrink: 0;
+}
+
+.widget-image-alt-label {
+  font-size: 0.7rem;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.widget-image-alt-string {
+  flex: 1;
+  min-width: 0;
+}
+
+.widget-image-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.widget-image-preview {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.widget-image-placeholder {
+  color: #555;
+  font-size: 0.7rem;
+  user-select: none;
+}
