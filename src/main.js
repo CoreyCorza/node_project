@@ -9,6 +9,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
 import { open, save } from '@tauri-apps/plugin-dialog'
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs'
 import { Graph } from './js/graph/index.js'
+import { Preview } from './js/Preview.js'
 import { createBooleanWidget } from './js/graph/widgets/BooleanWidget.js'
 
 function disableNativeTooltips() {
@@ -107,15 +108,8 @@ splitter.className = 'splitter'
 const splitPaneRight = document.createElement('div')
 splitPaneRight.className = 'split-pane-right'
 
-const previewPanel = document.createElement('div')
-previewPanel.className = 'preview-panel'
-previewPanel.innerHTML = `
-  <div class="preview-panel-header">Preview</div>
-  <div class="preview-panel-iframe-wrap">
-    <iframe id="preview-frame" title="Preview" sandbox="allow-scripts" srcdoc="<!DOCTYPE html><html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'></head><body style='margin:0;padding:16px;font-family:system-ui;'><p style='color:#888'>Compiled preview will appear here.</p></body></html>"></iframe>
-  </div>
-`
-splitPaneRight.appendChild(previewPanel)
+const preview = new Preview()
+splitPaneRight.appendChild(preview.getElement())
 
 splitPane.appendChild(splitPaneLeft)
 splitPane.appendChild(splitter)
@@ -126,7 +120,6 @@ const graphContainer = document.createElement('div')
 graphContainer.className = 'node-graph'
 splitPaneLeft.appendChild(graphContainer)
 
-const previewIframe = previewPanel.querySelector('iframe')
 
 function initSplitter() {
   const storageKey = 'node-graph-split'

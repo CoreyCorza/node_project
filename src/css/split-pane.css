@@ -105,36 +105,6 @@
   border-radius: 2px;
 }
 
-.preview-panel {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: #1a1a1a;
-}
-
-.preview-panel-header {
-  flex-shrink: 0;
-  padding: 4px 8px;
-  font-size: 0.65rem;
-  color: #888;
-  text-transform: uppercase;
-  border-bottom: 1px solid #333;
-}
-
-.preview-panel-iframe-wrap {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.preview-panel iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #fff;
-}
-
 .split-pane.preview-hidden .splitter,
 .split-pane.preview-hidden .split-pane-right {
   display: none;

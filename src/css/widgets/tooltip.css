@@ -1,3 +1,23 @@
+/* Global tooltip (data-tooltip, positioned via JS) */
+.tooltip {
+  position: fixed;
+  z-index: 10000;
+  padding: 4px 8px;
+  font-size: var(--ui-font-size);
+  color: #bdbdbd;
+  background: #1a1a1a;
+  border: 1px solid #33333369;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tooltip.visible {
+  opacity: 1;
+}
+
 .widget-tooltip-wrap {
   position: relative;
 }
@@ -11,7 +31,7 @@
   font-size: 0.6rem;
   color: #ccc;
   background: #1a1a1a;
-  border: 1px solid #444;
+  border: 1px solid #44444400;
   border-radius: 3px;
   white-space: nowrap;
   pointer-events: none;
