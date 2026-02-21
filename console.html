@@ -352,12 +352,13 @@
       addEntry(level, text, timestamp)
     })
 
-    listen('anchor-lost', () => {
-      invoke('clear_global_mode').catch(() => {})
-      currentMode = 'standard'
-      modeStatus.textContent = 'Standard'
+    listen('anchor-lost', async () => {
+      await appWindow.setAlwaysOnTop(true)
+      await invoke('set_global_mode').catch(() => {})
+      currentMode = 'global'
+      modeStatus.textContent = 'Global'
       updateModeButtons()
-      saveSetting('mode', 'standard')
+      saveSetting('mode', 'global')
     })
   </script>
 </body>

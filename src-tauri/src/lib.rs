@@ -13,6 +13,8 @@ mod win {
 
     pub static ANCHOR_STATE: Mutex<Option<AnchorState>> = Mutex::new(None);
     pub static GLOBAL_MODE: Mutex<bool> = Mutex::new(false);
+    /// true when the tracking loop itself minimized the console (not the user)
+    pub static LOOP_MINIMIZED: Mutex<bool> = Mutex::new(false);
 
     pub struct AnchorState {
         pub target_hwnd: isize,
@@ -156,10 +158,16 @@ mod win {
                             let console_minimized = console_win.is_minimized().unwrap_or(false);
 
                             if main_minimized && !console_minimized {
+                                *LOOP_MINIMIZED.lock().unwrap() = true;
                                 let _ = console_win.minimize();
                             } else if !main_minimized && console_minimized {
-                                let _ = console_win.unminimize();
-                                let _ = console_win.show();
+                                let mut lm = LOOP_MINIMIZED.lock().unwrap();
+                                if *lm {
+                                    *lm = false;
+                                    let _ = console_win.unminimize();
+                                    let _ = console_win.show();
+                                }
+                                // else: user minimized it — leave it alone
                             }
                         }
                     }
@@ -192,14 +200,20 @@ mod win {
                 let we_minimized = window.is_minimized().unwrap_or(false);
 
                 if target_minimized && !we_minimized {
+                    *LOOP_MINIMIZED.lock().unwrap() = true;
                     let _ = window.minimize();
                     continue;
                 }
                 if !target_minimized && we_minimized {
-                    let _ = window.unminimize();
-                    let _ = window.show();
+                    let mut lm = LOOP_MINIMIZED.lock().unwrap();
+                    if *lm {
+                        *lm = false;
+                        let _ = window.unminimize();
+                        let _ = window.show();
+                    }
+                    // else: user minimized it — leave it alone
                 }
-                if target_minimized {
+                if target_minimized || we_minimized {
                     continue;
                 }
             }
@@ -271,6 +285,7 @@ fn start_window_picker<R: Runtime>(window: Window<R>) -> Result<String, String> 
 fn set_global_mode() -> Result<(), String> {
     #[cfg(windows)]
     {
+        *win::LOOP_MINIMIZED.lock().unwrap() = false;
         *win::GLOBAL_MODE.lock().unwrap() = true;
     }
     Ok(())
@@ -280,6 +295,7 @@ fn set_global_mode() -> Result<(), String> {
 fn clear_global_mode() -> Result<(), String> {
     #[cfg(windows)]
     {
+        *win::LOOP_MINIMIZED.lock().unwrap() = false;
         *win::GLOBAL_MODE.lock().unwrap() = false;
     }
     Ok(())
@@ -289,6 +305,7 @@ fn clear_global_mode() -> Result<(), String> {
 fn stop_anchor<R: Runtime>(window: Window<R>) -> Result<(), String> {
     #[cfg(windows)]
     {
+        *win::LOOP_MINIMIZED.lock().unwrap() = false;
         win::clear_anchor();
         let _ = window.set_always_on_top(false);
     }

@@ -65,6 +65,9 @@ export class Graph {
       }
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) base.selectedFilePath = n.selectedFilePath
       if (n.nodeTypeId === 'bool') base.booleanValue = n.booleanValue
+      if (n.nodeTypeId === 'float' && n.floatValue !== undefined) base.floatValue = n.floatValue
+      if (n.nodeTypeId === 'integer' && n.inputValue !== undefined) base.inputValue = n.inputValue
+      if (n.nodeTypeId === 'string' && n.stringValue !== undefined) base.stringValue = n.stringValue
       if (n.nodeTypeId === 'input') {
         if (n.inputValue !== undefined) base.inputValue = n.inputValue
         if (n.inputDataType !== undefined) base.inputDataType = n.inputDataType
@@ -107,6 +110,8 @@ export class Graph {
         inputValue: n.inputValue,
         inputDataType: n.inputDataType,
         booleanValue: n.booleanValue,
+        floatValue: n.floatValue,
+        stringValue: n.stringValue,
         floatRound: n.floatRound,
         floatDecimals: n.floatDecimals,
         selectedFilePath: n.selectedFilePath,
@@ -377,6 +382,9 @@ export class Graph {
       }
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) base.selectedFilePath = n.selectedFilePath
       if (n.nodeTypeId === 'bool') base.booleanValue = n.booleanValue
+      if (n.nodeTypeId === 'float' && n.floatValue !== undefined) base.floatValue = n.floatValue
+      if (n.nodeTypeId === 'integer' && n.inputValue !== undefined) base.inputValue = n.inputValue
+      if (n.nodeTypeId === 'string' && n.stringValue !== undefined) base.stringValue = n.stringValue
       if (n.nodeTypeId === 'input') {
         if (n.inputValue !== undefined) base.inputValue = n.inputValue
         if (n.inputDataType !== undefined) base.inputDataType = n.inputDataType
@@ -435,6 +443,8 @@ export class Graph {
         inputValue: n.inputValue,
         inputDataType: n.inputDataType,
         booleanValue: n.booleanValue,
+        floatValue: n.floatValue,
+        stringValue: n.stringValue,
         floatRound: n.floatRound,
         floatDecimals: n.floatDecimals,
         selectedFilePath: n.selectedFilePath,
@@ -607,6 +617,10 @@ export class Graph {
       : computeFn
     inputs.forEach(s => node.addInputSocket(s.id ?? s, s.label ?? s, s.dataType ?? 'default'))
     outputs.forEach(s => node.addOutputSocket(s.id ?? s, s.label ?? s, s.dataType ?? 'default'))
+    if (options.nodeTypeId === 'float' && options.floatValue !== undefined) node.floatValue = options.floatValue
+    if (options.nodeTypeId === 'integer' && options.inputValue !== undefined) node.inputValue = options.inputValue
+    if (options.nodeTypeId === 'string' && options.stringValue !== undefined) node.stringValue = options.stringValue
+    if (options.nodeTypeId === 'bool' && options.booleanValue !== undefined) node.booleanValue = options.booleanValue
     if (options.nodeTypeId === 'input') {
       if (options.inputValue !== undefined) node.inputValue = options.inputValue
       if (options.inputDataType !== undefined) node.inputDataType = options.inputDataType

@@ -18,23 +18,24 @@ export const Debug = {
     const val = conn?.fromSocket?.value
     if (val === undefined) {
       el.textContent = '(no value)'
+      console.info(`[Debug] ${this.title}: (no value)`)
       return
     }
     const srcNode = conn?.fromSocket?.node
+    let displayText
     if (typeof val === 'string' && srcNode?.nodeTypeId === 'load-file') {
       try {
-        const content = await readTextFile(val)
-        el.textContent = content
+        displayText = await readTextFile(val)
       } catch (err) {
-        el.textContent = `[Error: ${err}]`
+        displayText = `[Error: ${err}]`
       }
+    } else if (typeof val === 'number' && srcNode?.inputDataType === 'float') {
+      const decimals = srcNode.floatDecimals ?? 2
+      displayText = val.toFixed(decimals)
     } else {
-      if (typeof val === 'number' && srcNode?.inputDataType === 'float') {
-        const decimals = srcNode.floatDecimals ?? 2
-        el.textContent = val.toFixed(decimals)
-      } else {
-        el.textContent = String(val)
-      }
+      displayText = String(val)
     }
+    el.textContent = displayText
+    console.info(`[Debug] ${this.title}: ${displayText}`)
   }
 }
