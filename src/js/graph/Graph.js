@@ -552,7 +552,8 @@ export class Graph {
   onKeyDown(e) {
     const active = document.activeElement
     const inInput = active?.tagName === 'INPUT' || active?.tagName === 'TEXTAREA'
-    if (e.key === 'c' && (e.ctrlKey || e.metaKey) && !inInput) {
+    const hasSelection = window.getSelection()?.toString().length > 0
+    if (e.key === 'c' && (e.ctrlKey || e.metaKey) && !inInput && !hasSelection) {
       this.copySelectedNodes()
       e.preventDefault()
     } else if (e.key === 'v' && (e.ctrlKey || e.metaKey) && !inInput) {
