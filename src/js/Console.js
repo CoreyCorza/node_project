@@ -2,11 +2,22 @@ import '../css/console.css'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { emitTo } from '@tauri-apps/api/event'
 
+const STORAGE_KEY = 'console-geometry'
+
+function loadGeometry() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) } catch { return null }
+}
+
+function saveGeometry(geo) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(geo)) } catch {}
+}
+
 export class Console {
   constructor({ getDebugEnabled }) {
     this.window = null
     this.buffer = []
     this.getDebugEnabled = getDebugEnabled
+    this._saveTimer = null
     this._hookConsole()
   }
 
@@ -19,24 +30,56 @@ export class Console {
         this.window = null
       }
     }
+    const geo = loadGeometry()
     const wv = new WebviewWindow('console', {
       url: '/console.html',
       title: 'Console',
-      width: 700,
-      height: 400,
+      width: geo?.width ?? 700,
+      height: geo?.height ?? 400,
+      x: geo?.x,
+      y: geo?.y,
       resizable: true,
       decorations: true
     })
     wv.once('tauri://error', () => { this.window = null })
     wv.once('tauri://created', () => {
       this.window = wv
+      this._trackGeometry(wv)
       setTimeout(() => {
         for (const msg of this.buffer) {
           emitTo('console', 'console-message', msg).catch(() => {})
         }
       }, 300)
     })
-    wv.once('tauri://destroyed', () => { this.window = null })
+    wv.once('tauri://destroyed', () => {
+      this._flushGeometry()
+      this.window = null
+    })
+  }
+
+  _scheduleSave(wv) {
+    if (this._saveTimer) clearTimeout(this._saveTimer)
+    this._saveTimer = setTimeout(() => this._persistGeometry(wv), 300)
+  }
+
+  async _persistGeometry(wv) {
+    try {
+      const pos = await wv.outerPosition()
+      const size = await wv.outerSize()
+      saveGeometry({ x: pos.x, y: pos.y, width: size.width, height: size.height })
+    } catch {}
+  }
+
+  _flushGeometry() {
+    if (this._saveTimer) {
+      clearTimeout(this._saveTimer)
+      this._saveTimer = null
+    }
+  }
+
+  _trackGeometry(wv) {
+    wv.onMoved(() => this._scheduleSave(wv))
+    wv.onResized(() => this._scheduleSave(wv))
   }
 
   _hookConsole() {

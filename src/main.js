@@ -257,6 +257,7 @@ toolbar.innerHTML = `
         <div class="settings-menu-divider"></div>
         <div class="settings-menu-label">Developer</div>
         <div class="settings-menu-toggle-row" data-debug-container></div>
+        <div class="settings-menu-toggle-row" data-console-autostart-container></div>
       </div>
     </div>
   </div>
@@ -550,6 +551,28 @@ const debugWidget = createBooleanWidget(debugState, {
   }
 })
 debugContainer.appendChild(debugWidget)
+
+// Console auto-start toggle
+const consoleAutoStartContainer = toolbar.querySelector('[data-console-autostart-container]')
+const consoleAutoStartState = { consoleAutoStart: true }
+try {
+  const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+  if (s.consoleAutoStart === false) consoleAutoStartState.consoleAutoStart = false
+} catch {}
+const consoleAutoStartWidget = createBooleanWidget(consoleAutoStartState, {
+  label: 'Console on Startup',
+  valueKey: 'consoleAutoStart',
+  onChange: () => {
+    try {
+      const s = JSON.parse(localStorage.getItem('node-graph-settings') || '{}')
+      s.consoleAutoStart = consoleAutoStartState.consoleAutoStart
+      localStorage.setItem('node-graph-settings', JSON.stringify(s))
+    } catch {}
+  }
+})
+consoleAutoStartContainer.appendChild(consoleAutoStartWidget)
+
+if (consoleAutoStartState.consoleAutoStart) systemConsole.open()
 
 const previewBtn = toolbar.querySelector('.toolbar-preview-btn')
 try {
