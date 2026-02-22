@@ -129,3 +129,22 @@
   box-shadow: 0 0 6px #3eb17b;
   transform: scale(1.15);
 }
+
+/* Inline integer widget inside a socket row (shared by image, div, etc.) */
+.socket-row.input:has(.widget-socket-int) .socket {
+  order: 0;
+}
+
+.widget-socket-int {
+  order: 1;
+  width: 52px;
+  flex-shrink: 0;
+}
+
+.socket-row.input:has(.widget-socket-int) .socket-label {
+  order: 2;
+}
+
+.widget-socket-int .widget-integer-field-wrap {
+  width: 52px;
+}

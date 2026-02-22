@@ -7,8 +7,10 @@ import { BoolNode } from './BoolNode.js'
 import { TestNode } from './TestNode.js'
 import { InputNode } from './InputNode.js'
 import { ImageNode } from './ImageNode.js'
+import { ErrorNode } from './ErrorNode.js'
+import { DivNode } from './DivNode.js'
 
-const nodeDefs = [LoadFile, Debug, FloatNode, StringNode, IntegerNode, BoolNode, TestNode, InputNode, ImageNode]
+const nodeDefs = [LoadFile, Debug, FloatNode, StringNode, IntegerNode, BoolNode, TestNode, InputNode, ImageNode, ErrorNode, DivNode]
 
 export const NODE_TYPES = Object.fromEntries(nodeDefs.map(d => [d.id, d]))
 

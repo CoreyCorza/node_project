@@ -36,6 +36,7 @@ export const Debug = {
       displayText = String(val)
     }
     el.textContent = displayText
-    console.info(`[Debug] ${this.title}: ${displayText}`)
+    const logLevel = srcNode?.nodeTypeId === 'error' ? (srcNode.errorMode ?? 'error') : 'info'
+    console[logLevel](`[Debug] ${this.title}: ${displayText}`)
   }
 }

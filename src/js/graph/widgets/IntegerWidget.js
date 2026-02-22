@@ -32,6 +32,27 @@ export function createIntegerWidget(node, options = {}) {
       e.stopPropagation()
       input.blur()
     }
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      e.stopPropagation()
+      const nodeEl = wrap.closest('.node')
+      if (!nodeEl) return
+      const allIntWrappers = [...nodeEl.querySelectorAll('.widget-socket-int')]
+      const myWrapper = wrap.closest('.widget-socket-int') || wrap
+      const idx = allIntWrappers.indexOf(myWrapper)
+      const nextIdx = e.shiftKey ? idx - 1 : idx + 1
+      const nextWrapper = allIntWrappers[nextIdx]
+      if (!nextWrapper) { input.blur(); return }
+      const nextScrub = nextWrapper.querySelector('.widget-integer-scrub')
+      const nextInput = nextWrapper.querySelector('.widget-integer-field')
+      if (nextScrub && nextInput) {
+        input.blur()
+        nextInput.style.display = ''
+        nextScrub.style.display = 'none'
+        nextInput.focus()
+        nextInput.select()
+      }
+    }
   })
   input.addEventListener('blur', () => {
     const val = Math.round(parseFloat(node[valueKey]) || 0)

@@ -119,12 +119,12 @@ export function createImageWidget(node) {
 
   if (widthSocket?.rowEl) {
     widthWidgetEl = createIntegerWidget(node, { valueKey: 'imageWidth' })
-    widthWidgetEl.classList.add('widget-image-socket-int')
+    widthWidgetEl.classList.add('widget-socket-int')
     widthSocket.rowEl.appendChild(widthWidgetEl)
   }
   if (heightSocket?.rowEl) {
     heightWidgetEl = createIntegerWidget(node, { valueKey: 'imageHeight' })
-    heightWidgetEl.classList.add('widget-image-socket-int')
+    heightWidgetEl.classList.add('widget-socket-int')
     heightSocket.rowEl.appendChild(heightWidgetEl)
   }
 

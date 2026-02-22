@@ -359,7 +359,7 @@ graph.centerViewOnNodes()
 
 // --- Project save/load ---
 const crzFilter = { name: 'CRZ Project', extensions: ['crz'] }
-let currentProjectPath = null
+let currentProjectPath = localStorage.getItem('node-graph-project-path') || null
 let projectDirty = false
 
 const origSave = graph.save.bind(graph)
@@ -372,7 +372,9 @@ function updateTitle() {
   } else {
     appWindow.setTitle('NodeProject — Untitled')
   }
+  try { localStorage.setItem('node-graph-project-path', currentProjectPath || '') } catch {}
 }
+updateTitle()
 
 async function saveProject(forceDialog = false) {
   try {

@@ -68,6 +68,7 @@ export class Graph {
       if (n.nodeTypeId === 'float' && n.floatValue !== undefined) base.floatValue = n.floatValue
       if (n.nodeTypeId === 'integer' && n.inputValue !== undefined) base.inputValue = n.inputValue
       if (n.nodeTypeId === 'string' && n.stringValue !== undefined) base.stringValue = n.stringValue
+      if (n.nodeTypeId === 'error' && n.errorMode !== undefined) base.errorMode = n.errorMode
       if (n.nodeTypeId === 'input') {
         if (n.inputValue !== undefined) base.inputValue = n.inputValue
         if (n.inputDataType !== undefined) base.inputDataType = n.inputDataType
@@ -81,6 +82,11 @@ export class Graph {
         if (n.imageHeight !== undefined) base.imageHeight = n.imageHeight
         if (n.imageAltEnabled !== undefined) base.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) base.imageAltText = n.imageAltText
+      }
+      if (n.nodeTypeId === 'div') {
+        if (n.divWidth !== undefined) base.divWidth = n.divWidth
+        if (n.divHeight !== undefined) base.divHeight = n.divHeight
+        if (n.divPadding !== undefined) base.divPadding = n.divPadding
       }
       return base
     })
@@ -112,13 +118,17 @@ export class Graph {
         booleanValue: n.booleanValue,
         floatValue: n.floatValue,
         stringValue: n.stringValue,
+        errorMode: n.errorMode,
         floatRound: n.floatRound,
         floatDecimals: n.floatDecimals,
         selectedFilePath: n.selectedFilePath,
         imageWidth: n.imageWidth,
         imageHeight: n.imageHeight,
         imageAltEnabled: n.imageAltEnabled,
-        imageAltText: n.imageAltText
+        imageAltText: n.imageAltText,
+        divWidth: n.divWidth,
+        divHeight: n.divHeight,
+        divPadding: n.divPadding
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -140,6 +150,11 @@ export class Graph {
         if (n.imageAltEnabled !== undefined) node.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) node.imageAltText = n.imageAltText
         node._imageWidget?.update?.()
+      }
+      if (n.nodeTypeId === 'div') {
+        if (n.divWidth !== undefined) node.divWidth = n.divWidth
+        if (n.divHeight !== undefined) node.divHeight = n.divHeight
+        if (n.divPadding !== undefined) node.divPadding = n.divPadding
       }
       nodeMap[n.id] = node
     }
@@ -266,6 +281,8 @@ export class Graph {
           <div class="context-item" data-action="add-bool">Bool Node</div>
           <div class="context-item" data-action="add-input">Input Node</div>
           <div class="context-item" data-action="add-image">Image</div>
+          <div class="context-item" data-action="add-error">Error</div>
+          <div class="context-item" data-action="add-div">Div</div>
         </div>
       </div>
     `
@@ -284,7 +301,7 @@ export class Graph {
       e.stopPropagation()
       const item = e.target.closest('.context-item[data-action]')
       if (item && item.dataset.action?.startsWith('add-') && this.contextGraphPos) {
-        const typeMap = { 'add-load-file': 'load-file', 'add-debug': 'debug', 'add-test': 'test', 'add-float': 'float', 'add-string': 'string', 'add-int': 'integer', 'add-bool': 'bool', 'add-input': 'input', 'add-image': 'image' }
+        const typeMap = { 'add-load-file': 'load-file', 'add-debug': 'debug', 'add-test': 'test', 'add-float': 'float', 'add-string': 'string', 'add-int': 'integer', 'add-bool': 'bool', 'add-input': 'input', 'add-image': 'image', 'add-error': 'error', 'add-div': 'div' }
         const typeId = typeMap[item.dataset.action]
         if (typeId) {
           const def = getNodeType(typeId)
@@ -385,6 +402,7 @@ export class Graph {
       if (n.nodeTypeId === 'float' && n.floatValue !== undefined) base.floatValue = n.floatValue
       if (n.nodeTypeId === 'integer' && n.inputValue !== undefined) base.inputValue = n.inputValue
       if (n.nodeTypeId === 'string' && n.stringValue !== undefined) base.stringValue = n.stringValue
+      if (n.nodeTypeId === 'error' && n.errorMode !== undefined) base.errorMode = n.errorMode
       if (n.nodeTypeId === 'input') {
         if (n.inputValue !== undefined) base.inputValue = n.inputValue
         if (n.inputDataType !== undefined) base.inputDataType = n.inputDataType
@@ -398,6 +416,11 @@ export class Graph {
         if (n.imageHeight !== undefined) base.imageHeight = n.imageHeight
         if (n.imageAltEnabled !== undefined) base.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) base.imageAltText = n.imageAltText
+      }
+      if (n.nodeTypeId === 'div') {
+        if (n.divWidth !== undefined) base.divWidth = n.divWidth
+        if (n.divHeight !== undefined) base.divHeight = n.divHeight
+        if (n.divPadding !== undefined) base.divPadding = n.divPadding
       }
       return base
     })
@@ -445,13 +468,17 @@ export class Graph {
         booleanValue: n.booleanValue,
         floatValue: n.floatValue,
         stringValue: n.stringValue,
+        errorMode: n.errorMode,
         floatRound: n.floatRound,
         floatDecimals: n.floatDecimals,
         selectedFilePath: n.selectedFilePath,
         imageWidth: n.imageWidth,
         imageHeight: n.imageHeight,
         imageAltEnabled: n.imageAltEnabled,
-        imageAltText: n.imageAltText
+        imageAltText: n.imageAltText,
+        divWidth: n.divWidth,
+        divHeight: n.divHeight,
+        divPadding: n.divPadding
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -473,6 +500,11 @@ export class Graph {
         if (n.imageAltEnabled !== undefined) node.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) node.imageAltText = n.imageAltText
         node._imageWidget?.update?.()
+      }
+      if (n.nodeTypeId === 'div') {
+        if (n.divWidth !== undefined) node.divWidth = n.divWidth
+        if (n.divHeight !== undefined) node.divHeight = n.divHeight
+        if (n.divPadding !== undefined) node.divPadding = n.divPadding
       }
       nodeMap[n.id] = node
       this.selectedNodes.add(node)
@@ -526,11 +558,15 @@ export class Graph {
         const conn = s.connections[0]
         if (conn?.fromSocket) inputs[s.id] = conn.fromSocket.value
       }
-      const outputs = node.compute(inputs)
-      if (outputs && typeof outputs === 'object') {
-        for (const s of node.outputs) {
-          if (s.id in outputs) s.value = outputs[s.id]
+      try {
+        const outputs = node.compute(inputs)
+        if (outputs && typeof outputs === 'object') {
+          for (const s of node.outputs) {
+            if (s.id in outputs) s.value = outputs[s.id]
+          }
         }
+      } catch (err) {
+        console.error(`[${node.title}] ${err.message ?? err}`)
       }
     }
     for (const node of this.nodes) {
@@ -603,8 +639,9 @@ export class Graph {
     const inputs = options.inputs ?? typeDef?.inputs ?? [{ id: 'in', label: 'in' }]
     const outputs = options.outputs ?? typeDef?.outputs ?? [{ id: 'out', label: 'out' }]
     let computeFn = options.computeFn ?? typeDef?.compute ?? null
+    const width = options.width ?? typeDef?.defaultWidth ?? undefined
     const height = (options.height != null && options.height > 0) ? options.height : (typeDef?.defaultHeight ?? 0)
-    const node = new Node(this, id, title, x, y, options.width, height, {
+    const node = new Node(this, id, title, x, y, width, height, {
       nodeTypeId: options.nodeTypeId ?? null,
       resizableW: options.resizableW ?? typeDef?.resizableW ?? true,
       resizableH: options.resizableH ?? typeDef?.resizableH ?? false,
@@ -621,6 +658,7 @@ export class Graph {
     if (options.nodeTypeId === 'integer' && options.inputValue !== undefined) node.inputValue = options.inputValue
     if (options.nodeTypeId === 'string' && options.stringValue !== undefined) node.stringValue = options.stringValue
     if (options.nodeTypeId === 'bool' && options.booleanValue !== undefined) node.booleanValue = options.booleanValue
+    if (options.nodeTypeId === 'error' && options.errorMode !== undefined) node.errorMode = options.errorMode
     if (options.nodeTypeId === 'input') {
       if (options.inputValue !== undefined) node.inputValue = options.inputValue
       if (options.inputDataType !== undefined) node.inputDataType = options.inputDataType
@@ -634,6 +672,11 @@ export class Graph {
       if (options.imageHeight !== undefined) node.imageHeight = options.imageHeight
       if (options.imageAltEnabled !== undefined) node.imageAltEnabled = options.imageAltEnabled
       if (options.imageAltText !== undefined) node.imageAltText = options.imageAltText
+    }
+    if (options.nodeTypeId === 'div') {
+      if (options.divWidth !== undefined) node.divWidth = options.divWidth
+      if (options.divHeight !== undefined) node.divHeight = options.divHeight
+      if (options.divPadding !== undefined) node.divPadding = options.divPadding
     }
     this.nodes.push(node)
     this.nodesEl.appendChild(node.createElement())

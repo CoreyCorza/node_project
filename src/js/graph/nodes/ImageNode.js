@@ -6,6 +6,7 @@ export const ImageNode = {
   title: 'Image',
   resizableW: true,
   resizableH: true,
+  defaultWidth: 220,
   defaultHeight: 200,
   inputs: [
     { id: 'width', label: 'width', dataType: 'integer' },

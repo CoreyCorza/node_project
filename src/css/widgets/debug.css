@@ -30,6 +30,42 @@
   border-radius: 4px;
 }
 
+.node[data-node-type="debug"] .node-sockets-row {
+  grid-template-columns: 1fr;
+}
+
+.node[data-node-type="debug"] .node-drag-zone,
+.node[data-node-type="debug"] .node-sockets.outputs {
+  display: none;
+}
+
+.node[data-node-type="debug"] .node-sockets.inputs {
+  margin-left: -15px;
+  padding-right: 4px;
+}
+
+.node[data-node-type="debug"] .socket-row.input {
+  padding-right: 0;
+}
+
+.widget-debug-clear {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #666;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.widget-debug-clear:hover {
+  color: #aaa;
+}
+
+.widget-debug-clear:active {
+  background: #333;
+  border-color: #444;
+  color: #ccc;
+}
+
 .node-widget-debug-output {
   margin: 0;
   padding: 4px;
