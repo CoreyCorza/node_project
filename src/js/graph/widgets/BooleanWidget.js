@@ -45,6 +45,7 @@ export function createBooleanWidget(nodeOrState, options = {}) {
     node[valueKey] = !node[valueKey]
     update()
     options.onChange?.()
+    node.graph?.save?.()
   })
   btn.addEventListener('mousedown', (e) => e.stopPropagation())
   btn.addEventListener('pointerdown', (e) => e.stopPropagation())

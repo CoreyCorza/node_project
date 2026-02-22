@@ -61,6 +61,7 @@ export function createIntegerWidget(node, options = {}) {
     scrubEl.textContent = String(val)
     input.style.display = 'none'
     scrubEl.style.display = ''
+    node.graph?.save?.()
   })
   input.addEventListener('mousedown', (e) => e.stopPropagation())
   input.addEventListener('pointerdown', (e) => e.stopPropagation())
@@ -105,6 +106,8 @@ export function createIntegerWidget(node, options = {}) {
         scrubEl.style.display = 'none'
         input.focus()
         input.select()
+      } else {
+        node.graph?.save?.()
       }
     }
 

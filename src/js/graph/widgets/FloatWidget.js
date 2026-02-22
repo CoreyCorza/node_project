@@ -47,6 +47,7 @@ export function createFloatWidget(node, options = {}) {
     scrubEl.textContent = formatted
     input.style.display = 'none'
     scrubEl.style.display = ''
+    node.graph?.save?.()
   })
   input.addEventListener('mousedown', (e) => e.stopPropagation())
   input.addEventListener('pointerdown', (e) => e.stopPropagation())
@@ -98,6 +99,8 @@ export function createFloatWidget(node, options = {}) {
         scrubEl.style.display = 'none'
         input.focus()
         input.select()
+      } else {
+        node.graph?.save?.()
       }
     }
 

@@ -28,6 +28,9 @@ export function createStringWidget(node, options = {}) {
       input.blur()
     }
   })
+  input.addEventListener('blur', () => {
+    node.graph?.save?.()
+  })
   input.addEventListener('mousedown', (e) => e.stopPropagation())
   input.addEventListener('pointerdown', (e) => e.stopPropagation())
   wrap.appendChild(input)

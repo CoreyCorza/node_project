@@ -29,6 +29,9 @@ export function createImageWidget(node) {
       input.blur()
     }
   })
+  input.addEventListener('blur', () => {
+    node.graph?.save?.()
+  })
   input.addEventListener('mousedown', (e) => e.stopPropagation())
   input.addEventListener('pointerdown', (e) => e.stopPropagation())
 
@@ -48,6 +51,7 @@ export function createImageWidget(node) {
       node.selectedFilePath = typeof path === 'string' ? path : path.path ?? path
       input.value = node.selectedFilePath
       update()
+      node.graph?.save?.()
     }
   })
 
