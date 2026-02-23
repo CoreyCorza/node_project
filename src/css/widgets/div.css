@@ -1,1 +1,106 @@
-/* Div node - styles handled by shared .widget-socket-int in socket.css */
+/* Div / Body node widget */
+.widget-div-overflow-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px 4px;
+}
+
+.widget-div-overflow-label {
+  font-size: 0.65rem;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.widget-div-overflow-dropdown {
+  flex: 1;
+  min-width: 0;
+}
+
+.widget-div-overflow-dropdown .widget-dropdown-trigger {
+  width: 100%;
+}
+
+/* auto / % dimension mode checkboxes */
+.widget-dim-mode {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  order: 3;
+  margin-left: auto;
+}
+
+.widget-dim-check {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #555;
+  border-radius: 2px;
+  background: #1a1a1a;
+  cursor: pointer;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.widget-dim-check:checked {
+  background: #4a9eff;
+  border-color: #4a9eff;
+}
+
+.widget-dim-check:checked::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 2px;
+  background: #fff;
+  border-radius: 1px;
+}
+
+.widget-dim-check-label {
+  font-size: 0.55rem;
+  color: #777;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 2px;
+}
+
+/* percent value input */
+.widget-dim-pct-input {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: none;
+  width: 32px;
+  padding: 1px 3px;
+  font-size: 0.6rem;
+  font-family: inherit;
+  color: #ccc;
+  background: #1a1a1a;
+  border: 1px solid #555;
+  border-radius: 2px;
+  outline: none;
+  text-align: center;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.widget-dim-pct-input:focus {
+  border-color: #4a9eff;
+}
+
+.widget-dim-pct-input::-webkit-inner-spin-button,
+.widget-dim-pct-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* greyed-out integer widget when auto/percent mode active */
+.widget-socket-int.disabled {
+  opacity: 0.3;
+}

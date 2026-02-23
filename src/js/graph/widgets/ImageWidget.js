@@ -114,6 +114,10 @@ export function createImageWidget(node) {
   // inject integer widgets into socket rows
   if (node.imageWidth === undefined) node.imageWidth = '0'
   if (node.imageHeight === undefined) node.imageHeight = '0'
+  if (node.imageWidthMode === undefined) node.imageWidthMode = ''
+  if (node.imageHeightMode === undefined) node.imageHeightMode = ''
+  if (node.imageWidthPercent === undefined) node.imageWidthPercent = '100'
+  if (node.imageHeightPercent === undefined) node.imageHeightPercent = '100'
 
   const widthSocket = node.inputs.find(s => s.id === 'width')
   const heightSocket = node.inputs.find(s => s.id === 'height')
@@ -132,6 +136,98 @@ export function createImageWidget(node) {
     heightSocket.rowEl.appendChild(heightWidgetEl)
   }
 
+  // auto/% checkboxes + percent input for width and height
+  const modeControls = {}
+  for (const [dim, modeKey, pctKey, socket, intEl] of [
+    ['width', 'imageWidthMode', 'imageWidthPercent', widthSocket, widthWidgetEl],
+    ['height', 'imageHeightMode', 'imageHeightPercent', heightSocket, heightWidgetEl]
+  ]) {
+    if (!socket?.rowEl) continue
+
+    const modeWrap = document.createElement('div')
+    modeWrap.className = 'widget-dim-mode'
+    modeWrap.addEventListener('mousedown', (e) => e.stopPropagation())
+    modeWrap.addEventListener('pointerdown', (e) => e.stopPropagation())
+
+    const autoCheck = document.createElement('input')
+    autoCheck.type = 'checkbox'
+    autoCheck.className = 'widget-dim-check'
+    autoCheck.checked = node[modeKey] === 'auto'
+    const autoLabel = document.createElement('label')
+    autoLabel.className = 'widget-dim-check-label'
+    autoLabel.textContent = 'auto'
+    autoLabel.addEventListener('mousedown', (e) => e.stopPropagation())
+    autoLabel.addEventListener('pointerdown', (e) => e.stopPropagation())
+
+    const pctCheck = document.createElement('input')
+    pctCheck.type = 'checkbox'
+    pctCheck.className = 'widget-dim-check'
+    pctCheck.checked = node[modeKey] === 'percent'
+    const pctLabel = document.createElement('label')
+    pctLabel.className = 'widget-dim-check-label'
+    pctLabel.textContent = '%'
+    pctLabel.addEventListener('mousedown', (e) => e.stopPropagation())
+    pctLabel.addEventListener('pointerdown', (e) => e.stopPropagation())
+
+    // percent input field
+    const pctInput = document.createElement('input')
+    pctInput.type = 'number'
+    pctInput.className = 'widget-dim-pct-input'
+    pctInput.value = node[pctKey] || '100'
+    pctInput.style.display = node[modeKey] === 'percent' ? '' : 'none'
+    pctInput.addEventListener('input', (e) => {
+      e.stopPropagation()
+      node[pctKey] = pctInput.value
+    })
+    pctInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.stopPropagation(); pctInput.blur() }
+    })
+    pctInput.addEventListener('blur', () => node.graph?.save?.())
+    pctInput.addEventListener('mousedown', (e) => e.stopPropagation())
+    pctInput.addEventListener('pointerdown', (e) => e.stopPropagation())
+
+    autoCheck.addEventListener('change', (e) => {
+      e.stopPropagation()
+      if (autoCheck.checked) { pctCheck.checked = false; node[modeKey] = 'auto' }
+      else { node[modeKey] = '' }
+      updateModeState()
+      node.graph?.save?.()
+    })
+    autoCheck.addEventListener('mousedown', (e) => e.stopPropagation())
+    autoCheck.addEventListener('pointerdown', (e) => e.stopPropagation())
+
+    pctCheck.addEventListener('change', (e) => {
+      e.stopPropagation()
+      if (pctCheck.checked) { autoCheck.checked = false; node[modeKey] = 'percent' }
+      else { node[modeKey] = '' }
+      updateModeState()
+      node.graph?.save?.()
+    })
+    pctCheck.addEventListener('mousedown', (e) => e.stopPropagation())
+    pctCheck.addEventListener('pointerdown', (e) => e.stopPropagation())
+
+    modeWrap.appendChild(autoCheck)
+    modeWrap.appendChild(autoLabel)
+    modeWrap.appendChild(pctCheck)
+    modeWrap.appendChild(pctLabel)
+    modeWrap.appendChild(pctInput)
+    socket.rowEl.appendChild(modeWrap)
+
+    modeControls[dim] = { modeKey, intEl, modeWrap, pctInput }
+  }
+
+  function updateModeState() {
+    for (const ctrl of Object.values(modeControls)) {
+      if (!ctrl.intEl) continue
+      const mode = node[ctrl.modeKey]
+      const disabled = mode === 'auto' || mode === 'percent'
+      ctrl.intEl.classList.toggle('disabled', disabled)
+      ctrl.intEl.style.pointerEvents = disabled ? 'none' : ''
+      ctrl.pctInput.style.display = mode === 'percent' ? '' : 'none'
+    }
+  }
+  updateModeState()
+
   // hook into socket connect/disconnect to toggle widget visibility
   for (const socket of [widthSocket, heightSocket]) {
     if (!socket) continue
@@ -146,6 +242,9 @@ export function createImageWidget(node) {
     const hConnected = heightSocket && heightSocket.connections.length > 0
     if (widthWidgetEl) widthWidgetEl.style.display = wConnected ? 'none' : ''
     if (heightWidgetEl) heightWidgetEl.style.display = hConnected ? 'none' : ''
+    // hide mode checkboxes when socket is connected
+    if (modeControls.width) modeControls.width.modeWrap.style.display = wConnected ? 'none' : ''
+    if (modeControls.height) modeControls.height.modeWrap.style.display = hConnected ? 'none' : ''
   }
 
   function setSizeFromImage(naturalW, naturalH) {

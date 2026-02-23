@@ -1,0 +1,82 @@
+/* Head node widget */
+.widget-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 6px 4px;
+}
+
+.widget-head-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.widget-head-section:first-child {
+  border-top: none;
+}
+
+.widget-head-section-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #667;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.widget-head-dropdown {
+  width: 100%;
+}
+
+.widget-head-dropdown .widget-dropdown-trigger {
+  width: 100%;
+}
+
+/* viewport row: toggle + text inline */
+.widget-head-viewport-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.widget-head-toggle {
+  flex: 0 0 auto;
+}
+
+.widget-head-toggle .widget-label {
+  flex: 0 0 auto;
+}
+
+.widget-head-viewport-text {
+  font-size: 0.65rem;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.widget-head-viewport-text.disabled {
+  color: #555;
+  font-style: italic;
+}
+
+/* theme color row: swatch + hex input inline */
+.widget-head-color-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.widget-head-color-picker {
+  width: 28px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.widget-head-color-hex {
+  flex: 1;
+  min-width: 0;
+}

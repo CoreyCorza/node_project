@@ -18,6 +18,8 @@ export const ImageNode = {
     node._imageResolvedPath = pickerPath ? convertFileSrc(pickerPath) : ''
     const widgetW = parseInt(node.imageWidth, 10) || 0
     const widgetH = parseInt(node.imageHeight, 10) || 0
+    const wMode = node.imageWidthMode || ''
+    const hMode = node.imageHeightMode || ''
     node._imageWidth = inputs.width ?? (widgetW || null)
     node._imageHeight = inputs.height ?? (widgetH || null)
 
@@ -26,8 +28,18 @@ export const ImageNode = {
       const attrs = [`src="${pickerPath}"`]
       const altText = node.imageAltEnabled ? (node.imageAltText ?? '') : ''
       attrs.push(`alt="${altText}"`)
-      if (node._imageWidth) attrs.push(`width="${node._imageWidth}"`)
-      if (node._imageHeight) attrs.push(`height="${node._imageHeight}"`)
+      const wPct = parseInt(node.imageWidthPercent, 10) || 0
+      const hPct = parseInt(node.imageHeightPercent, 10) || 0
+      const styles = []
+      // width
+      if (wMode === 'auto') styles.push('width:auto')
+      else if (wMode === 'percent' && wPct) styles.push(`width:${wPct}%`)
+      else if (node._imageWidth) styles.push(`width:${node._imageWidth}px`)
+      // height
+      if (hMode === 'auto') styles.push('height:auto')
+      else if (hMode === 'percent' && hPct) styles.push(`height:${hPct}%`)
+      else if (node._imageHeight) styles.push(`height:${node._imageHeight}px`)
+      if (styles.length) attrs.push(`style="${styles.join(';')}"`)
       html = `<img ${attrs.join(' ')} />`
     }
     return { html }

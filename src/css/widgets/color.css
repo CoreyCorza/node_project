@@ -1,0 +1,43 @@
+/* Color picker widget */
+.widget-color {
+  gap: 6px;
+}
+
+.widget-color .widget-label {
+  flex: 0 0 auto;
+}
+
+.widget-color-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid var(--socket-border, #555);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  padding: 0;
+}
+
+.widget-color-picker::-webkit-color-swatch-wrapper {
+  padding: 1px;
+}
+
+.widget-color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+.widget-color-picker::-moz-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+.widget-color-hex {
+  font-size: 0.7rem;
+  color: #aaa;
+  font-family: monospace;
+  user-select: text;
+}

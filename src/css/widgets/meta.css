@@ -1,0 +1,49 @@
+/* Meta node widget */
+.widget-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 6px;
+}
+
+.widget-meta-dropdown {
+  width: 100%;
+}
+
+.widget-meta-dropdown .widget-dropdown-trigger {
+  width: 100%;
+}
+
+.widget-meta-robots {
+  width: 100%;
+}
+
+.widget-meta-robots .widget-dropdown-trigger {
+  width: 100%;
+}
+
+/* Inline string field inside a socket row (shared pattern like widget-socket-int) */
+.socket-row.input:has(.widget-socket-str) .socket {
+  order: 0;
+}
+
+.widget-socket-str {
+  order: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.socket-row.input:has(.widget-socket-str) .socket-label {
+  order: 2;
+  flex: 0 0 auto;
+}
+
+.widget-meta-field {
+  display: flex;
+  width: 100%;
+}
+
+.widget-meta-field .widget-string-field {
+  width: 100%;
+  min-width: 0;
+}

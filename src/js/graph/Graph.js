@@ -82,11 +82,46 @@ export class Graph {
         if (n.imageHeight !== undefined) base.imageHeight = n.imageHeight
         if (n.imageAltEnabled !== undefined) base.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) base.imageAltText = n.imageAltText
+        if (n.imageWidthMode !== undefined) base.imageWidthMode = n.imageWidthMode
+        if (n.imageHeightMode !== undefined) base.imageHeightMode = n.imageHeightMode
+        if (n.imageWidthPercent !== undefined) base.imageWidthPercent = n.imageWidthPercent
+        if (n.imageHeightPercent !== undefined) base.imageHeightPercent = n.imageHeightPercent
       }
       if (n.nodeTypeId === 'div') {
         if (n.divWidth !== undefined) base.divWidth = n.divWidth
         if (n.divHeight !== undefined) base.divHeight = n.divHeight
         if (n.divPadding !== undefined) base.divPadding = n.divPadding
+        if (n.divBorderRadius !== undefined) base.divBorderRadius = n.divBorderRadius
+        if (n.divOverflow !== undefined) base.divOverflow = n.divOverflow
+        if (n.divWidthMode !== undefined) base.divWidthMode = n.divWidthMode
+        if (n.divHeightMode !== undefined) base.divHeightMode = n.divHeightMode
+        if (n.divWidthPercent !== undefined) base.divWidthPercent = n.divWidthPercent
+        if (n.divHeightPercent !== undefined) base.divHeightPercent = n.divHeightPercent
+      }
+      if (n.nodeTypeId === 'body') {
+        if (n.bodyBorderRadius !== undefined) base.bodyBorderRadius = n.bodyBorderRadius
+        if (n.bodyPadding !== undefined) base.bodyPadding = n.bodyPadding
+        if (n.bodyOverflow !== undefined) base.bodyOverflow = n.bodyOverflow
+      }
+      if (n.nodeTypeId === 'meta') {
+        if (n.metaName !== undefined) base.metaName = n.metaName
+        if (n.metaContent !== undefined) base.metaContent = n.metaContent
+        if (n.metaRobots !== undefined) base.metaRobots = n.metaRobots
+        if (n.metaCustomName !== undefined) base.metaCustomName = n.metaCustomName
+      }
+      if (n.nodeTypeId === 'color' && n.colorValue !== undefined) base.colorValue = n.colorValue
+      if (n.nodeTypeId === 'head') {
+        if (n.headTitle !== undefined) base.headTitle = n.headTitle
+        if (n.headCharset !== undefined) base.headCharset = n.headCharset
+        if (n.headViewport !== undefined) base.headViewport = n.headViewport
+        if (n.headMetaName !== undefined) base.headMetaName = n.headMetaName
+        if (n.headMetaContent !== undefined) base.headMetaContent = n.headMetaContent
+        if (n.headMetaRobots !== undefined) base.headMetaRobots = n.headMetaRobots
+        if (n.headThemeColor !== undefined) base.headThemeColor = n.headThemeColor
+        if (n.headOgEnabled !== undefined) base.headOgEnabled = n.headOgEnabled
+      }
+      if (n.nodeTypeId === 'icon') {
+        if (n.iconFilePath !== undefined) base.iconFilePath = n.iconFilePath
       }
       return base
     })
@@ -126,9 +161,36 @@ export class Graph {
         imageHeight: n.imageHeight,
         imageAltEnabled: n.imageAltEnabled,
         imageAltText: n.imageAltText,
+        imageWidthMode: n.imageWidthMode,
+        imageHeightMode: n.imageHeightMode,
+        imageWidthPercent: n.imageWidthPercent,
+        imageHeightPercent: n.imageHeightPercent,
         divWidth: n.divWidth,
         divHeight: n.divHeight,
-        divPadding: n.divPadding
+        divPadding: n.divPadding,
+        divBorderRadius: n.divBorderRadius,
+        divOverflow: n.divOverflow,
+        divWidthMode: n.divWidthMode,
+        divHeightMode: n.divHeightMode,
+        divWidthPercent: n.divWidthPercent,
+        divHeightPercent: n.divHeightPercent,
+        bodyBorderRadius: n.bodyBorderRadius,
+        bodyPadding: n.bodyPadding,
+        bodyOverflow: n.bodyOverflow,
+        metaName: n.metaName,
+        metaContent: n.metaContent,
+        metaRobots: n.metaRobots,
+        metaCustomName: n.metaCustomName,
+        colorValue: n.colorValue,
+        headTitle: n.headTitle,
+        headCharset: n.headCharset,
+        headViewport: n.headViewport,
+        headMetaName: n.headMetaName,
+        headMetaContent: n.headMetaContent,
+        headMetaRobots: n.headMetaRobots,
+        headThemeColor: n.headThemeColor,
+        headOgEnabled: n.headOgEnabled,
+        iconFilePath: n.iconFilePath
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -149,13 +211,35 @@ export class Graph {
         if (n.imageHeight !== undefined) node.imageHeight = n.imageHeight
         if (n.imageAltEnabled !== undefined) node.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) node.imageAltText = n.imageAltText
+        if (n.imageWidthMode !== undefined) node.imageWidthMode = n.imageWidthMode
+        if (n.imageHeightMode !== undefined) node.imageHeightMode = n.imageHeightMode
+        if (n.imageWidthPercent !== undefined) node.imageWidthPercent = n.imageWidthPercent
+        if (n.imageHeightPercent !== undefined) node.imageHeightPercent = n.imageHeightPercent
         node._imageWidget?.update?.()
       }
       if (n.nodeTypeId === 'div') {
         if (n.divWidth !== undefined) node.divWidth = n.divWidth
         if (n.divHeight !== undefined) node.divHeight = n.divHeight
         if (n.divPadding !== undefined) node.divPadding = n.divPadding
+        if (n.divBorderRadius !== undefined) node.divBorderRadius = n.divBorderRadius
+        if (n.divOverflow !== undefined) node.divOverflow = n.divOverflow
+        if (n.divWidthMode !== undefined) node.divWidthMode = n.divWidthMode
+        if (n.divHeightMode !== undefined) node.divHeightMode = n.divHeightMode
+        if (n.divWidthPercent !== undefined) node.divWidthPercent = n.divWidthPercent
+        if (n.divHeightPercent !== undefined) node.divHeightPercent = n.divHeightPercent
       }
+      if (n.nodeTypeId === 'body') {
+        if (n.bodyBorderRadius !== undefined) node.bodyBorderRadius = n.bodyBorderRadius
+        if (n.bodyPadding !== undefined) node.bodyPadding = n.bodyPadding
+        if (n.bodyOverflow !== undefined) node.bodyOverflow = n.bodyOverflow
+      }
+      if (n.nodeTypeId === 'meta') {
+        if (n.metaName !== undefined) node.metaName = n.metaName
+        if (n.metaContent !== undefined) node.metaContent = n.metaContent
+        if (n.metaRobots !== undefined) node.metaRobots = n.metaRobots
+        if (n.metaCustomName !== undefined) node.metaCustomName = n.metaCustomName
+      }
+      if (n.nodeTypeId === 'color' && n.colorValue !== undefined) node.colorValue = n.colorValue
       nodeMap[n.id] = node
     }
     for (const c of data.connections ?? []) {
@@ -283,6 +367,12 @@ export class Graph {
           <div class="context-item" data-action="add-image">Image</div>
           <div class="context-item" data-action="add-error">Error</div>
           <div class="context-item" data-action="add-div">Div</div>
+          <div class="context-item" data-action="add-document">Document</div>
+          <div class="context-item" data-action="add-head">Head</div>
+          <div class="context-item" data-action="add-body">Body</div>
+          <div class="context-item" data-action="add-meta">Meta</div>
+          <div class="context-item" data-action="add-color">Color</div>
+          <div class="context-item" data-action="add-icon">Icon</div>
         </div>
       </div>
     `
@@ -301,7 +391,7 @@ export class Graph {
       e.stopPropagation()
       const item = e.target.closest('.context-item[data-action]')
       if (item && item.dataset.action?.startsWith('add-') && this.contextGraphPos) {
-        const typeMap = { 'add-load-file': 'load-file', 'add-debug': 'debug', 'add-test': 'test', 'add-float': 'float', 'add-string': 'string', 'add-int': 'integer', 'add-bool': 'bool', 'add-input': 'input', 'add-image': 'image', 'add-error': 'error', 'add-div': 'div' }
+        const typeMap = { 'add-load-file': 'load-file', 'add-debug': 'debug', 'add-test': 'test', 'add-float': 'float', 'add-string': 'string', 'add-int': 'integer', 'add-bool': 'bool', 'add-input': 'input', 'add-image': 'image', 'add-error': 'error', 'add-div': 'div', 'add-document': 'document', 'add-head': 'head', 'add-body': 'body', 'add-meta': 'meta', 'add-color': 'color', 'add-icon': 'icon' }
         const typeId = typeMap[item.dataset.action]
         if (typeId) {
           const def = getNodeType(typeId)
@@ -416,11 +506,46 @@ export class Graph {
         if (n.imageHeight !== undefined) base.imageHeight = n.imageHeight
         if (n.imageAltEnabled !== undefined) base.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) base.imageAltText = n.imageAltText
+        if (n.imageWidthMode !== undefined) base.imageWidthMode = n.imageWidthMode
+        if (n.imageHeightMode !== undefined) base.imageHeightMode = n.imageHeightMode
+        if (n.imageWidthPercent !== undefined) base.imageWidthPercent = n.imageWidthPercent
+        if (n.imageHeightPercent !== undefined) base.imageHeightPercent = n.imageHeightPercent
       }
       if (n.nodeTypeId === 'div') {
         if (n.divWidth !== undefined) base.divWidth = n.divWidth
         if (n.divHeight !== undefined) base.divHeight = n.divHeight
         if (n.divPadding !== undefined) base.divPadding = n.divPadding
+        if (n.divBorderRadius !== undefined) base.divBorderRadius = n.divBorderRadius
+        if (n.divOverflow !== undefined) base.divOverflow = n.divOverflow
+        if (n.divWidthMode !== undefined) base.divWidthMode = n.divWidthMode
+        if (n.divHeightMode !== undefined) base.divHeightMode = n.divHeightMode
+        if (n.divWidthPercent !== undefined) base.divWidthPercent = n.divWidthPercent
+        if (n.divHeightPercent !== undefined) base.divHeightPercent = n.divHeightPercent
+      }
+      if (n.nodeTypeId === 'body') {
+        if (n.bodyBorderRadius !== undefined) base.bodyBorderRadius = n.bodyBorderRadius
+        if (n.bodyPadding !== undefined) base.bodyPadding = n.bodyPadding
+        if (n.bodyOverflow !== undefined) base.bodyOverflow = n.bodyOverflow
+      }
+      if (n.nodeTypeId === 'meta') {
+        if (n.metaName !== undefined) base.metaName = n.metaName
+        if (n.metaContent !== undefined) base.metaContent = n.metaContent
+        if (n.metaRobots !== undefined) base.metaRobots = n.metaRobots
+        if (n.metaCustomName !== undefined) base.metaCustomName = n.metaCustomName
+      }
+      if (n.nodeTypeId === 'color' && n.colorValue !== undefined) base.colorValue = n.colorValue
+      if (n.nodeTypeId === 'head') {
+        if (n.headTitle !== undefined) base.headTitle = n.headTitle
+        if (n.headCharset !== undefined) base.headCharset = n.headCharset
+        if (n.headViewport !== undefined) base.headViewport = n.headViewport
+        if (n.headMetaName !== undefined) base.headMetaName = n.headMetaName
+        if (n.headMetaContent !== undefined) base.headMetaContent = n.headMetaContent
+        if (n.headMetaRobots !== undefined) base.headMetaRobots = n.headMetaRobots
+        if (n.headThemeColor !== undefined) base.headThemeColor = n.headThemeColor
+        if (n.headOgEnabled !== undefined) base.headOgEnabled = n.headOgEnabled
+      }
+      if (n.nodeTypeId === 'icon') {
+        if (n.iconFilePath !== undefined) base.iconFilePath = n.iconFilePath
       }
       return base
     })
@@ -476,9 +601,36 @@ export class Graph {
         imageHeight: n.imageHeight,
         imageAltEnabled: n.imageAltEnabled,
         imageAltText: n.imageAltText,
+        imageWidthMode: n.imageWidthMode,
+        imageHeightMode: n.imageHeightMode,
+        imageWidthPercent: n.imageWidthPercent,
+        imageHeightPercent: n.imageHeightPercent,
         divWidth: n.divWidth,
         divHeight: n.divHeight,
-        divPadding: n.divPadding
+        divPadding: n.divPadding,
+        divBorderRadius: n.divBorderRadius,
+        divOverflow: n.divOverflow,
+        divWidthMode: n.divWidthMode,
+        divHeightMode: n.divHeightMode,
+        divWidthPercent: n.divWidthPercent,
+        divHeightPercent: n.divHeightPercent,
+        bodyBorderRadius: n.bodyBorderRadius,
+        bodyPadding: n.bodyPadding,
+        bodyOverflow: n.bodyOverflow,
+        metaName: n.metaName,
+        metaContent: n.metaContent,
+        metaRobots: n.metaRobots,
+        metaCustomName: n.metaCustomName,
+        colorValue: n.colorValue,
+        headTitle: n.headTitle,
+        headCharset: n.headCharset,
+        headViewport: n.headViewport,
+        headMetaName: n.headMetaName,
+        headMetaContent: n.headMetaContent,
+        headMetaRobots: n.headMetaRobots,
+        headThemeColor: n.headThemeColor,
+        headOgEnabled: n.headOgEnabled,
+        iconFilePath: n.iconFilePath
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
         node.selectedFilePath = n.selectedFilePath
@@ -499,13 +651,35 @@ export class Graph {
         if (n.imageHeight !== undefined) node.imageHeight = n.imageHeight
         if (n.imageAltEnabled !== undefined) node.imageAltEnabled = n.imageAltEnabled
         if (n.imageAltText !== undefined) node.imageAltText = n.imageAltText
+        if (n.imageWidthMode !== undefined) node.imageWidthMode = n.imageWidthMode
+        if (n.imageHeightMode !== undefined) node.imageHeightMode = n.imageHeightMode
+        if (n.imageWidthPercent !== undefined) node.imageWidthPercent = n.imageWidthPercent
+        if (n.imageHeightPercent !== undefined) node.imageHeightPercent = n.imageHeightPercent
         node._imageWidget?.update?.()
       }
       if (n.nodeTypeId === 'div') {
         if (n.divWidth !== undefined) node.divWidth = n.divWidth
         if (n.divHeight !== undefined) node.divHeight = n.divHeight
         if (n.divPadding !== undefined) node.divPadding = n.divPadding
+        if (n.divBorderRadius !== undefined) node.divBorderRadius = n.divBorderRadius
+        if (n.divOverflow !== undefined) node.divOverflow = n.divOverflow
+        if (n.divWidthMode !== undefined) node.divWidthMode = n.divWidthMode
+        if (n.divHeightMode !== undefined) node.divHeightMode = n.divHeightMode
+        if (n.divWidthPercent !== undefined) node.divWidthPercent = n.divWidthPercent
+        if (n.divHeightPercent !== undefined) node.divHeightPercent = n.divHeightPercent
       }
+      if (n.nodeTypeId === 'body') {
+        if (n.bodyBorderRadius !== undefined) node.bodyBorderRadius = n.bodyBorderRadius
+        if (n.bodyPadding !== undefined) node.bodyPadding = n.bodyPadding
+        if (n.bodyOverflow !== undefined) node.bodyOverflow = n.bodyOverflow
+      }
+      if (n.nodeTypeId === 'meta') {
+        if (n.metaName !== undefined) node.metaName = n.metaName
+        if (n.metaContent !== undefined) node.metaContent = n.metaContent
+        if (n.metaRobots !== undefined) node.metaRobots = n.metaRobots
+        if (n.metaCustomName !== undefined) node.metaCustomName = n.metaCustomName
+      }
+      if (n.nodeTypeId === 'color' && n.colorValue !== undefined) node.colorValue = n.colorValue
       nodeMap[n.id] = node
       this.selectedNodes.add(node)
     }
@@ -672,11 +846,46 @@ export class Graph {
       if (options.imageHeight !== undefined) node.imageHeight = options.imageHeight
       if (options.imageAltEnabled !== undefined) node.imageAltEnabled = options.imageAltEnabled
       if (options.imageAltText !== undefined) node.imageAltText = options.imageAltText
+      if (options.imageWidthMode !== undefined) node.imageWidthMode = options.imageWidthMode
+      if (options.imageHeightMode !== undefined) node.imageHeightMode = options.imageHeightMode
+      if (options.imageWidthPercent !== undefined) node.imageWidthPercent = options.imageWidthPercent
+      if (options.imageHeightPercent !== undefined) node.imageHeightPercent = options.imageHeightPercent
     }
     if (options.nodeTypeId === 'div') {
       if (options.divWidth !== undefined) node.divWidth = options.divWidth
       if (options.divHeight !== undefined) node.divHeight = options.divHeight
       if (options.divPadding !== undefined) node.divPadding = options.divPadding
+      if (options.divBorderRadius !== undefined) node.divBorderRadius = options.divBorderRadius
+      if (options.divOverflow !== undefined) node.divOverflow = options.divOverflow
+      if (options.divWidthMode !== undefined) node.divWidthMode = options.divWidthMode
+      if (options.divHeightMode !== undefined) node.divHeightMode = options.divHeightMode
+      if (options.divWidthPercent !== undefined) node.divWidthPercent = options.divWidthPercent
+      if (options.divHeightPercent !== undefined) node.divHeightPercent = options.divHeightPercent
+    }
+    if (options.nodeTypeId === 'body') {
+      if (options.bodyBorderRadius !== undefined) node.bodyBorderRadius = options.bodyBorderRadius
+      if (options.bodyPadding !== undefined) node.bodyPadding = options.bodyPadding
+      if (options.bodyOverflow !== undefined) node.bodyOverflow = options.bodyOverflow
+    }
+    if (options.nodeTypeId === 'meta') {
+      if (options.metaName !== undefined) node.metaName = options.metaName
+      if (options.metaContent !== undefined) node.metaContent = options.metaContent
+      if (options.metaRobots !== undefined) node.metaRobots = options.metaRobots
+      if (options.metaCustomName !== undefined) node.metaCustomName = options.metaCustomName
+    }
+    if (options.nodeTypeId === 'color' && options.colorValue !== undefined) node.colorValue = options.colorValue
+    if (options.nodeTypeId === 'head') {
+      if (options.headTitle !== undefined) node.headTitle = options.headTitle
+      if (options.headCharset !== undefined) node.headCharset = options.headCharset
+      if (options.headViewport !== undefined) node.headViewport = options.headViewport
+      if (options.headMetaName !== undefined) node.headMetaName = options.headMetaName
+      if (options.headMetaContent !== undefined) node.headMetaContent = options.headMetaContent
+      if (options.headMetaRobots !== undefined) node.headMetaRobots = options.headMetaRobots
+      if (options.headThemeColor !== undefined) node.headThemeColor = options.headThemeColor
+      if (options.headOgEnabled !== undefined) node.headOgEnabled = options.headOgEnabled
+    }
+    if (options.nodeTypeId === 'icon') {
+      if (options.iconFilePath !== undefined) node.iconFilePath = options.iconFilePath
     }
     this.nodes.push(node)
     this.nodesEl.appendChild(node.createElement())
@@ -709,6 +918,7 @@ export class Graph {
     node.el.querySelectorAll('.node-sockets-row, .socket-row, .node-sockets').forEach(el => {
       el.addEventListener('mousedown', (e) => {
         if (e.target.closest('.socket')) return
+        if (e.target.closest('input, textarea, select, button, label')) return
         startDrag(e)
       })
     })

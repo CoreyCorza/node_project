@@ -20,7 +20,6 @@ mod win {
         pub target_hwnd: isize,
         pub offset_x: i32,
         pub offset_y: i32,
-        pub target_title: String,
     }
 
     fn get_window_title(hwnd: HWND) -> String {
@@ -121,7 +120,6 @@ mod win {
                     target_hwnd,
                     offset_x: position.x - rect.left,
                     offset_y: position.y - rect.top,
-                    target_title: get_window_title(hwnd),
                 });
             }
         }
