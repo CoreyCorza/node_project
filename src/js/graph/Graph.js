@@ -117,8 +117,10 @@ export class Graph {
         if (n.headMetaName !== undefined) base.headMetaName = n.headMetaName
         if (n.headMetaContent !== undefined) base.headMetaContent = n.headMetaContent
         if (n.headMetaRobots !== undefined) base.headMetaRobots = n.headMetaRobots
-        if (n.headThemeColor !== undefined) base.headThemeColor = n.headThemeColor
         if (n.headOgEnabled !== undefined) base.headOgEnabled = n.headOgEnabled
+        if (n.headOgType !== undefined) base.headOgType = n.headOgType
+        if (n.headOgTitle !== undefined) base.headOgTitle = n.headOgTitle
+        if (n.headOgDescription !== undefined) base.headOgDescription = n.headOgDescription
       }
       if (n.nodeTypeId === 'icon') {
         if (n.iconFilePath !== undefined) base.iconFilePath = n.iconFilePath
@@ -188,8 +190,10 @@ export class Graph {
         headMetaName: n.headMetaName,
         headMetaContent: n.headMetaContent,
         headMetaRobots: n.headMetaRobots,
-        headThemeColor: n.headThemeColor,
         headOgEnabled: n.headOgEnabled,
+        headOgType: n.headOgType,
+        headOgTitle: n.headOgTitle,
+        headOgDescription: n.headOgDescription,
         iconFilePath: n.iconFilePath
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
@@ -541,8 +545,10 @@ export class Graph {
         if (n.headMetaName !== undefined) base.headMetaName = n.headMetaName
         if (n.headMetaContent !== undefined) base.headMetaContent = n.headMetaContent
         if (n.headMetaRobots !== undefined) base.headMetaRobots = n.headMetaRobots
-        if (n.headThemeColor !== undefined) base.headThemeColor = n.headThemeColor
         if (n.headOgEnabled !== undefined) base.headOgEnabled = n.headOgEnabled
+        if (n.headOgType !== undefined) base.headOgType = n.headOgType
+        if (n.headOgTitle !== undefined) base.headOgTitle = n.headOgTitle
+        if (n.headOgDescription !== undefined) base.headOgDescription = n.headOgDescription
       }
       if (n.nodeTypeId === 'icon') {
         if (n.iconFilePath !== undefined) base.iconFilePath = n.iconFilePath
@@ -628,8 +634,10 @@ export class Graph {
         headMetaName: n.headMetaName,
         headMetaContent: n.headMetaContent,
         headMetaRobots: n.headMetaRobots,
-        headThemeColor: n.headThemeColor,
         headOgEnabled: n.headOgEnabled,
+        headOgType: n.headOgType,
+        headOgTitle: n.headOgTitle,
+        headOgDescription: n.headOgDescription,
         iconFilePath: n.iconFilePath
       })
       if (n.nodeTypeId === 'load-file' && n.selectedFilePath) {
@@ -881,8 +889,10 @@ export class Graph {
       if (options.headMetaName !== undefined) node.headMetaName = options.headMetaName
       if (options.headMetaContent !== undefined) node.headMetaContent = options.headMetaContent
       if (options.headMetaRobots !== undefined) node.headMetaRobots = options.headMetaRobots
-      if (options.headThemeColor !== undefined) node.headThemeColor = options.headThemeColor
       if (options.headOgEnabled !== undefined) node.headOgEnabled = options.headOgEnabled
+      if (options.headOgType !== undefined) node.headOgType = options.headOgType
+      if (options.headOgTitle !== undefined) node.headOgTitle = options.headOgTitle
+      if (options.headOgDescription !== undefined) node.headOgDescription = options.headOgDescription
     }
     if (options.nodeTypeId === 'icon') {
       if (options.iconFilePath !== undefined) node.iconFilePath = options.iconFilePath

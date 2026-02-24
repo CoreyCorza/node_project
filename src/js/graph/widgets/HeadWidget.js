@@ -23,6 +23,12 @@ const ROBOTS_ITEMS = [
   { value: 'index, nofollow', label: 'index, nofollow' }
 ]
 
+const OG_ITEMS = [
+  { value: 'og:title', label: 'og:title' },
+  { value: 'og:description', label: 'og:description' },
+  { value: 'og:image', label: 'og:image' }
+]
+
 export function createHeadWidget(node) {
   const wrap = document.createElement('div')
   wrap.className = 'widget-head'
@@ -34,8 +40,10 @@ export function createHeadWidget(node) {
   if (node.headMetaName === undefined) node.headMetaName = ''
   if (node.headMetaContent === undefined) node.headMetaContent = ''
   if (node.headMetaRobots === undefined) node.headMetaRobots = 'index, follow'
-  if (node.headThemeColor === undefined) node.headThemeColor = ''
   if (node.headOgEnabled === undefined) node.headOgEnabled = false
+  if (node.headOgType === undefined) node.headOgType = 'og:title'
+  if (node.headOgTitle === undefined) node.headOgTitle = ''
+  if (node.headOgDescription === undefined) node.headOgDescription = ''
 
   const trackEl = node.graph?.containerEl ?? null
 
@@ -145,55 +153,100 @@ export function createHeadWidget(node) {
   updateMetaVisibility()
   wrap.appendChild(metaSection)
 
-  // --- THEME COLOR section ---
-  const colorSection = createSection('theme color')
-  const colorRow = document.createElement('div')
-  colorRow.className = 'widget-head-color-row'
-  const colorPicker = document.createElement('input')
-  colorPicker.type = 'color'
-  colorPicker.className = 'widget-color-picker widget-head-color-picker'
-  colorPicker.value = node.headThemeColor || '#000000'
-  colorPicker.addEventListener('input', (e) => {
-    e.stopPropagation()
-    node.headThemeColor = colorPicker.value
-    colorHex.value = colorPicker.value
-  })
-  colorPicker.addEventListener('change', () => node.graph?.save?.())
-  colorPicker.addEventListener('mousedown', (e) => e.stopPropagation())
-  colorPicker.addEventListener('pointerdown', (e) => e.stopPropagation())
-  colorRow.appendChild(colorPicker)
-
-  const colorHex = document.createElement('input')
-  colorHex.type = 'text'
-  colorHex.className = 'widget-string-field widget-head-color-hex'
-  colorHex.value = node.headThemeColor || '#000000'
-  colorHex.autocomplete = 'off'
-  colorHex.addEventListener('input', (e) => {
-    e.stopPropagation()
-    node.headThemeColor = colorHex.value
-    if (/^#[0-9a-fA-F]{6}$/.test(colorHex.value)) {
-      colorPicker.value = colorHex.value
-    }
-  })
-  colorHex.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.stopPropagation(); colorHex.blur() }
-  })
-  colorHex.addEventListener('blur', () => node.graph?.save?.())
-  colorHex.addEventListener('mousedown', (e) => e.stopPropagation())
-  colorHex.addEventListener('pointerdown', (e) => e.stopPropagation())
-  colorRow.appendChild(colorHex)
-
-  colorSection.appendChild(colorRow)
-  wrap.appendChild(colorSection)
-
   // --- OPEN GRAPH section ---
   const ogSection = createSection('open graph')
+  const ogRow = document.createElement('div')
+  ogRow.className = 'widget-head-og-row'
+
   const ogToggle = createBooleanWidget(node, {
     valueKey: 'headOgEnabled',
-    label: 'OG Tags'
+    onChange: () => {
+      if (!node.headOgEnabled) {
+        node.headOgType = 'og:title'
+        ogDropdown.setValue('og:title')
+      }
+      updateOgVisibility()
+    }
   })
   ogToggle.classList.add('widget-head-toggle')
-  ogSection.appendChild(ogToggle)
+  ogRow.appendChild(ogToggle)
+  ogSection.appendChild(ogRow)
+
+  // OG dropdown
+  const ogDropdown = createDropdownWidget({
+    items: OG_ITEMS,
+    value: node.headOgType,
+    trackEl,
+    onChange: (val) => {
+      node.headOgType = val
+      updateOgVisibility()
+      node.graph?.save?.()
+    }
+  })
+  ogDropdown.classList.add('widget-head-dropdown', 'widget-head-og-dropdown')
+  ogSection.appendChild(ogDropdown)
+
+  // OG title text field
+  const ogTitleInput = document.createElement('input')
+  ogTitleInput.type = 'text'
+  ogTitleInput.className = 'widget-string-field widget-head-og-field'
+  ogTitleInput.value = node.headOgTitle
+  ogTitleInput.placeholder = 'og:title...'
+  ogTitleInput.autocomplete = 'off'
+  ogTitleInput.addEventListener('input', (e) => {
+    e.stopPropagation()
+    node.headOgTitle = ogTitleInput.value
+  })
+  ogTitleInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.stopPropagation(); ogTitleInput.blur() }
+  })
+  ogTitleInput.addEventListener('blur', () => node.graph?.save?.())
+  ogTitleInput.addEventListener('mousedown', (e) => e.stopPropagation())
+  ogTitleInput.addEventListener('pointerdown', (e) => e.stopPropagation())
+  ogSection.appendChild(ogTitleInput)
+
+  // OG description text field
+  const ogDescInput = document.createElement('input')
+  ogDescInput.type = 'text'
+  ogDescInput.className = 'widget-string-field widget-head-og-field'
+  ogDescInput.value = node.headOgDescription
+  ogDescInput.placeholder = 'og:description...'
+  ogDescInput.autocomplete = 'off'
+  ogDescInput.addEventListener('input', (e) => {
+    e.stopPropagation()
+    node.headOgDescription = ogDescInput.value
+  })
+  ogDescInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.stopPropagation(); ogDescInput.blur() }
+  })
+  ogDescInput.addEventListener('blur', () => node.graph?.save?.())
+  ogDescInput.addEventListener('mousedown', (e) => e.stopPropagation())
+  ogDescInput.addEventListener('pointerdown', (e) => e.stopPropagation())
+  ogSection.appendChild(ogDescInput)
+
+  // move og:image socket row into widget section
+  const ogImageSocket = node.inputs.find(s => s.id === 'og-image')
+  if (ogImageSocket?.rowEl) {
+    ogSection.appendChild(ogImageSocket.rowEl)
+  }
+
+  function updateOgVisibility() {
+    const enabled = node.headOgEnabled
+    const sel = node.headOgType || 'og:title'
+    ogDropdown.style.display = enabled ? '' : 'none'
+    ogTitleInput.style.display = enabled && sel === 'og:title' ? '' : 'none'
+    ogDescInput.style.display = enabled && sel === 'og:description' ? '' : 'none'
+    const showImage = enabled && sel === 'og:image'
+    if (ogImageSocket?.rowEl) {
+      ogImageSocket.rowEl.style.display = showImage ? '' : 'none'
+    }
+    // disconnect og:image socket when hidden
+    if (!showImage && ogImageSocket) {
+      [...ogImageSocket.connections].forEach(n => n.remove())
+    }
+    node.requestResize?.()
+  }
+  updateOgVisibility()
   wrap.appendChild(ogSection)
 
   return wrap

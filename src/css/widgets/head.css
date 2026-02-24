@@ -63,20 +63,18 @@
   font-style: italic;
 }
 
-/* theme color row: swatch + hex input inline */
-.widget-head-color-row {
+/* open graph row: toggle inline */
+.widget-head-og-row {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.widget-head-color-picker {
-  width: 28px;
-  height: 20px;
-  flex-shrink: 0;
+.widget-head-og-dropdown {
+  margin-top: 2px;
 }
 
-.widget-head-color-hex {
-  flex: 1;
-  min-width: 0;
+/* og:image socket row moved into widget section */
+.widget-head-section > .socket-row.input {
+  margin-left: -23px;
 }

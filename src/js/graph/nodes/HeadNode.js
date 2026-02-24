@@ -7,7 +7,8 @@ export const HeadNode = {
   resizableH: false,
   inputs: [
     { id: 'favicon', label: 'icon', dataType: 'string' },
-    { id: 'meta', label: 'meta', dataType: 'string' }
+    { id: 'meta', label: 'meta', dataType: 'string' },
+    { id: 'og-image', label: 'og:image', dataType: 'string' }
   ],
   outputs: [{ id: 'html', label: 'html', dataType: 'string' }],
   compute: (inputs, node) => {
@@ -35,10 +36,6 @@ export const HeadNode = {
     const extraMeta = inputs.meta ?? ''
     if (extraMeta) parts.push('  ' + extraMeta.split('\n').join('\n  '))
 
-    // theme color
-    const color = node.headThemeColor || ''
-    if (color) parts.push(`  <meta name="theme-color" content="${color}">`)
-
     // title
     const title = node.headTitle || ''
     if (title) parts.push(`  <title>${title}</title>`)
@@ -54,9 +51,17 @@ export const HeadNode = {
 
     // open graph
     if (node.headOgEnabled) {
-      if (title) parts.push(`  <meta property="og:title" content="${title}">`)
-      const desc = node.headMetaName === 'description' ? (node.headMetaContent || '') : ''
-      if (desc) parts.push(`  <meta property="og:description" content="${desc}">`)
+      const ogType = node.headOgType || 'og:title'
+      if (ogType === 'og:title') {
+        const val = node.headOgTitle || ''
+        if (val) parts.push(`  <meta property="og:title" content="${val}">`)
+      } else if (ogType === 'og:description') {
+        const val = node.headOgDescription || ''
+        if (val) parts.push(`  <meta property="og:description" content="${val}">`)
+      } else if (ogType === 'og:image') {
+        const val = inputs['og-image'] ?? ''
+        if (val) parts.push(`  <meta property="og:image" content="${val}">`)
+      }
     }
 
     parts.push('</head>')
